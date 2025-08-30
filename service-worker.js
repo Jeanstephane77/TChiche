@@ -1,12 +1,11 @@
-const CACHE_NAME = 'tchiche-cache-v3'; // Nouvelle version du cache
+const CACHE_NAME = 'tchiche-cache-v4'; // Nouvelle version du cache
 const urlsToCache = [
   '/',
   '/index.html',
   '/script.js',
   '/manifest.json',
-  '/icons/icon-192.png',
-  '/icons/icon-512.png'
-  // On a temporairement enlevé la police Google pour s'assurer que rien ne bloque
+  '/icon-192.png',
+  '/icon-512.png'
 ];
 
 self.addEventListener('install', event => {
