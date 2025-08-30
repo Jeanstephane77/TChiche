@@ -1,0 +1,7 @@
+# Fichier de configuration pour le déploiement sur Netlify
+
+[build]
+  # Il n'y a pas de commande de build à exécuter pour ce projet
+  command = ""
+  # Le dossier à publier est la racine du projet
+  publish = "."
