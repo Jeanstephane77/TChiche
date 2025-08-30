@@ -1,19 +1,18 @@
-const CACHE_NAME = 'tchiche-cache-v2'; // J'ai changé la version du cache
+const CACHE_NAME = 'tchiche-cache-v3'; // Nouvelle version du cache
 const urlsToCache = [
   '/',
   '/index.html',
   '/script.js',
   '/manifest.json',
   '/icons/icon-192.png',
-  '/icons/icon-512.png',
-  'https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Montserrat:wght@400;600&display=swap'
+  '/icons/icon-512.png'
+  // On a temporairement enlevé la police Google pour s'assurer que rien ne bloque
 ];
 
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => {
-        console.log('Opened cache');
         return cache.addAll(urlsToCache);
       })
   );
@@ -24,15 +23,14 @@ self.addEventListener('fetch', event => {
     caches.match(event.request)
       .then(response => {
         if (response) {
-          return response; // Serve from cache
+          return response;
         }
-        return fetch(event.request); // Fetch from network
+        return fetch(event.request);
       }
     )
   );
 });
 
-// Supprimer les anciens caches
 self.addEventListener('activate', event => {
   const cacheWhitelist = [CACHE_NAME];
   event.waitUntil(
