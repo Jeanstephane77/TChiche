@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>T’chiche v2.0</title>
     <meta name="theme-color" content="#ff69b4"/>
+    <!-- C'est cette ligne qui relie votre design au HTML -->
     <link rel="stylesheet" href="styles.css">
     <link rel="manifest" href="manifest.json">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -14,90 +15,92 @@
 </head>
 <body>
 
-    <!-- Écran de Démarrage et Configuration -->
+    <!-- Écran de démarrage -->
     <div id="start-screen" class="screen active">
-        <h1>T'chiche</h1>
-        <p class="subtitle">L’expérience ultime</p>
-
-        <div class="setup-section">
-            <h2>1. Choisissez le niveau</h2>
-            <div id="level-selection" class="button-group">
-                <button class="level-btn" data-level="1">Phase 1: Préliminaires</button>
-                <button class="level-btn" data-level="2">Phase 2: Plus en profondeur</button>
-                <button class="level-btn" data-level="3">Phase 3: Hors de contrôle</button>
-                <button class="level-btn" data-level="4">Phase 4: Transcendance</button>
+        <div class="container">
+            <h1>T'chiche</h1>
+            
+            <div class="settings-group">
+                <h2>1. Choisissez le niveau</h2>
+                <div class="level-selector">
+                    <button class="level-btn" data-level="1">Phase 1 – Préliminaires</button>
+                    <button class="level-btn" data-level="2">Phase 2 – Plus en profondeur</button>
+                    <button class="level-btn" data-level="3">Phase 3 – Hors de contrôle</button>
+                    <button class="level-btn" data-level="4">Phase 4 – Transcendance</button>
+                </div>
             </div>
-        </div>
 
-        <div class="setup-section">
-            <h2>2. Choisissez le mode</h2>
-            <div id="mode-selection" class="button-group">
-                <button class="mode-btn" data-mode="amis">Entre amis</button>
-                <button class="mode-btn" data-mode="couple">En couple</button>
+            <div class="settings-group">
+                <h2>2. Choisissez le mode</h2>
+                <div class="mode-selector">
+                    <button class="mode-btn" data-mode="friends">Entre amis</button>
+                    <button class="mode-btn" data-mode="couple">En couple</button>
+                </div>
             </div>
-        </div>
-
-        <div class="setup-section">
-            <h2>3. Ajoutez les joueur·se·s</h2>
-            <div id="player-inputs">
-                <input type="text" class="player-input" placeholder="Prénom Joueur·se 1" required>
+            
+            <div class="settings-group">
+                <h2>3. Ajoutez les joueur·se·s</h2>
+                <div id="players-list">
+                    <div class="player-input-group">
+                        <input type="text" class="player-name" placeholder="Prénom Joueur/se 1" required>
+                    </div>
+                </div>
+                <button id="add-player-btn">+ Ajouter un·e joueur·se</button>
+                <button id="add-custom-challenges-btn">Ajouter mes propres défis</button>
             </div>
-            <button id="add-player-btn">+ Ajouter un·e joueur·se</button>
-        </div>
 
-        <button id="start-game-btn" class="main-cta">T'chiche ?</button>
-        
-        <button id="toggle-custom-challenge-btn">Ajouter mes propres défis</button>
-        
-        <!-- Section pour ajouter des défis personnalisés (cachée par défaut) -->
-        <div id="custom-challenge-section" class="hidden">
-            <h3>Ajouter un défi personnalisé</h3>
-            <select id="custom-challenge-level">
-                <option value="1">Phase 1</option>
-                <option value="2">Phase 2</option>
-                <option value="3">Phase 3</option>
-                <option value="4">Phase 4</option>
-            </select>
-            <select id="custom-challenge-type">
-                <option value="truth">Vérité</option>
-                <option value="dare">Action</option>
-            </select>
-            <textarea id="custom-challenge-text" placeholder="Écrivez votre défi ici..."></textarea>
-            <button id="save-custom-challenge-btn">Sauvegarder le défi</button>
-            <p id="custom-challenge-feedback" class="feedback"></p>
+            <button id="start-game-btn" class="cta-btn" disabled>T'chiche ?</button>
         </div>
     </div>
 
-    <!-- Écran de Jeu -->
+    <!-- Écran de jeu -->
     <div id="game-screen" class="screen">
-        <div class="game-header">
+        <div class="container">
             <h2 id="turn-indicator"></h2>
-        </div>
-        
-        <div id="challenge-card">
-            <p id="challenge-text">Préparez-vous...</p>
-        </div>
-
-        <div class="button-container">
-            <button id="truth-btn" class="choice-btn">Vérité</button>
-            <button id="dare-btn" class="choice-btn">Action</button>
-        </div>
-        
-        <div class="game-footer">
-             <button id="random-btn">Défi Aléatoire !</button>
-             <button id="next-turn-btn" class="hidden">Joueur·se Suivant·e</button>
+            <div id="challenge-card">
+                <p id="challenge-text">Préparez-vous...</p>
+            </div>
+            <div class="game-buttons">
+                <button id="truth-btn" class="choice-btn">Vérité</button>
+                <button id="dare-btn" class="choice-btn">Action</button>
+                <button id="random-btn" class="choice-btn">Défi Aléatoire</button>
+                <button id="next-player-btn" class="choice-btn">Joueur·se Suivant·e</button>
+            </div>
         </div>
     </div>
 
-    <!-- Scripts -->
+    <!-- Modal pour ajouter des défis personnalisés -->
+    <div id="custom-challenge-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2>Ajouter un défi personnalisé</h2>
+            <div class="custom-form">
+                <label for="custom-level-select">Choisir le niveau :</label>
+                <select id="custom-level-select">
+                    <option value="1">Phase 1 – Préliminaires</option>
+                    <option value="2">Phase 2 – Plus en profondeur</option>
+                    <option value="3">Phase 3 – Hors de contrôle</option>
+                    <option value="4">Phase 4 – Transcendance</option>
+                </select>
+                <label for="custom-type-select">Choisir le type :</label>
+                <select id="custom-type-select">
+                    <option value="truths">Vérité</option>
+                    <option value="dares">Action</option>
+                </select>
+                <textarea id="custom-challenge-input" placeholder="Écrivez votre défi ici..."></textarea>
+                <button id="save-custom-challenge-btn">Sauvegarder le défi</button>
+            </div>
+        </div>
+    </div>
+
     <script src="data.js"></script>
     <script src="script.js"></script>
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('/service-worker.js')
-                    .then(reg => console.log('Service Worker: Registered'))
-                    .catch(err => console.log(`Service Worker: Error: ${err}`));
+                    .then(registration => console.log('ServiceWorker registration successful:', registration))
+                    .catch(error => console.log('ServiceWorker registration failed:', error));
             });
         }
     </script>

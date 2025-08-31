@@ -1,0 +1,326 @@
+:root {
+    --bg-color: #0d0221;
+    --text-color: #ffffff;
+    --primary-color: #ff69b4;
+    --secondary-color: #f9f871;
+    --card-bg-color: rgba(2, 0, 36, 0.5);
+    --font-ui: 'Montserrat', sans-serif;
+    --font-title: 'Caveat', cursive;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: var(--font-ui);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    overflow-x: hidden;
+    text-align: center;
+    padding: 20px;
+}
+
+.screen {
+    display: none;
+    width: 100%;
+    max-width: 500px;
+}
+
+.screen.active {
+    display: block;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+h1 {
+    font-family: var(--font-title);
+    font-size: 5rem;
+    color: var(--primary-color);
+    text-shadow: 0 0 10px var(--primary-color), 0 0 20px var(--primary-color);
+    margin-bottom: 20px;
+}
+
+h2 {
+    color: var(--secondary-color);
+    text-transform: uppercase;
+    font-size: 1rem;
+    letter-spacing: 1px;
+    margin-bottom: 15px;
+}
+
+/* --- Start Screen --- */
+.settings-group {
+    background: var(--card-bg-color);
+    border: 1px solid var(--primary-color);
+    border-radius: 15px;
+    padding: 20px;
+    backdrop-filter: blur(5px);
+}
+
+.level-selector, .mode-selector {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.level-btn, .mode-btn {
+    background: transparent;
+    border: 1px solid var(--primary-color);
+    color: var(--primary-color);
+    padding: 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.level-btn.selected, .mode-btn.selected {
+    background: var(--primary-color);
+    color: var(--bg-color);
+    font-weight: 600;
+    box-shadow: 0 0 10px var(--primary-color);
+}
+
+#players-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.player-input-group {
+    display: flex;
+    gap: 10px;
+}
+
+.player-name {
+    flex-grow: 1;
+    padding: 12px;
+    border: 1px solid var(--primary-color);
+    border-radius: 8px;
+    background-color: rgba(0,0,0,0.3);
+    color: var(--text-color);
+    font-size: 1rem;
+}
+
+.remove-player-btn {
+    background: #ff3b30;
+    border: none;
+    color: white;
+    font-weight: bold;
+    border-radius: 8px;
+    width: 40px;
+    cursor: pointer;
+}
+
+#add-player-btn, #add-custom-challenges-btn {
+    width: 100%;
+    background: transparent;
+    border: 1px dashed var(--secondary-color);
+    color: var(--secondary-color);
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 5px;
+}
+
+.cta-btn {
+    background: var(--primary-color);
+    color: var(--bg-color);
+    font-weight: 600;
+    padding: 15px 30px;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    font-size: 1.5rem;
+    box-shadow: 0 0 15px var(--primary-color);
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.cta-btn:disabled {
+    background: #555;
+    color: #888;
+    box-shadow: none;
+    cursor: not-allowed;
+}
+
+.cta-btn:not(:disabled):hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 25px var(--primary-color);
+}
+
+/* --- Game Screen --- */
+#game-screen .container {
+    min-height: 80vh;
+    justify-content: space-between;
+}
+
+#turn-indicator {
+    font-size: 1.8rem;
+    color: var(--primary-color);
+    text-shadow: 0 0 5px var(--primary-color);
+}
+
+#challenge-card {
+    width: 100%;
+    min-height: 250px;
+    background: var(--card-bg-color);
+    border: 1px solid var(--primary-color);
+    border-radius: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 25px;
+    box-shadow: 0 0 15px rgba(255, 105, 180, 0.4);
+    backdrop-filter: blur(5px);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+#challenge-card.active {
+    transform: scale(1.03);
+    box-shadow: 0 0 25px rgba(255, 105, 180, 0.7);
+}
+
+#challenge-text {
+    font-family: var(--font-title);
+    font-size: 2.5rem;
+    line-height: 1.4;
+    animation: fadeIn 0.5s ease;
+}
+
+.game-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.choice-btn {
+    padding: 15px 0;
+    background: transparent;
+    border: 2px solid var(--primary-color);
+    color: var(--primary-color);
+    font-size: 1.2rem;
+    font-weight: 600;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-shadow: 0 0 5px var(--primary-color);
+}
+
+.choice-btn:hover {
+    background-color: var(--primary-color);
+    color: var(--bg-color);
+    box-shadow: 0 0 20px var(--primary-color);
+    transform: translateY(-5px);
+}
+
+#next-player-btn {
+    grid-column: 1 / -1; /* Prend toute la largeur */
+    background: var(--secondary-color);
+    border-color: var(--secondary-color);
+    color: var(--bg-color);
+    text-shadow: none;
+}
+
+/* --- Modal --- */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 100;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.8);
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    background-color: var(--bg-color);
+    border: 1px solid var(--primary-color);
+    border-radius: 15px;
+    margin: 15% auto;
+    padding: 25px;
+    width: 90%;
+    max-width: 500px;
+    position: relative;
+    animation: fadeIn 0.3s;
+}
+
+.close-btn {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.custom-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.custom-form label {
+    text-align: left;
+    font-size: 0.9rem;
+}
+
+.custom-form select, .custom-form textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--primary-color);
+    border-radius: 8px;
+    background-color: rgba(0,0,0,0.3);
+    color: var(--text-color);
+    font-size: 1rem;
+}
+
+.custom-form textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+#save-custom-challenge-btn {
+    background: var(--primary-color);
+    color: var(--bg-color);
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    h1 {
+        font-size: 4rem;
+    }
+    #challenge-text {
+        font-size: 2rem;
+    }
+    .level-selector {
+        grid-template-columns: 1fr;
+    }
+}
+
