@@ -1,9 +1,9 @@
-const CACHE_NAME = 'tchiche-cache-v4'; // Nouvelle version du cache
+const CACHE_NAME = 'tchiche-cache-v5'; // Version augmentée pour forcer la mise à jour
 const urlsToCache = [
-  '/',
+  '/?v=final',
   '/index.html',
-  '/script.js',
   '/manifest.json',
+  '/script.js',
   '/icon-192.png',
   '/icon-512.png'
 ];
@@ -12,6 +12,7 @@ self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => {
+        console.log('Opened cache');
         return cache.addAll(urlsToCache);
       })
   );
@@ -22,24 +23,19 @@ self.addEventListener('fetch', event => {
     caches.match(event.request)
       .then(response => {
         if (response) {
-          return response;
+          return response; // Serve from cache
         }
-        return fetch(event.request);
-      }
-    )
+        return fetch(event.request); // Fetch from network
+      })
   );
 });
 
+// Clean up old caches
 self.addEventListener('activate', event => {
-  const cacheWhitelist = [CACHE_NAME];
   event.waitUntil(
     caches.keys().then(cacheNames => {
       return Promise.all(
-        cacheNames.map(cacheName => {
-          if (cacheWhitelist.indexOf(cacheName) === -1) {
-            return caches.delete(cacheName);
-          }
-        })
+        cacheNames.filter(name => name !== CACHE_NAME).map(name => caches.delete(name))
       );
     })
   );
