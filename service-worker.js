@@ -1,13 +1,16 @@
-const CACHE_NAME = 'tchiche-cache-v5'; // Version augmentée pour forcer la mise à jour
+const CACHE_NAME = 'tchiche-cache-v2.0';
 const urlsToCache = [
-  '/?v=final',
+  '/',
   '/index.html',
-  '/manifest.json',
+  '/styles.css',
+  '/data.js',
   '/script.js',
-  '/icon-192.png',
-  '/icon-512.png'
+  '/manifest.json',
+  '/icons/icon-192.png',
+  '/icons/icon-512.png'
 ];
 
+// Installation du Service Worker
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
@@ -18,24 +21,32 @@ self.addEventListener('install', event => {
   );
 });
 
+// Stratégie de cache "Cache First"
 self.addEventListener('fetch', event => {
   event.respondWith(
     caches.match(event.request)
       .then(response => {
+        // Cache hit - return response
         if (response) {
-          return response; // Serve from cache
+          return response;
         }
-        return fetch(event.request); // Fetch from network
-      })
+        return fetch(event.request);
+      }
+    )
   );
 });
 
-// Clean up old caches
+// Mise à jour du Service Worker
 self.addEventListener('activate', event => {
+  const cacheWhitelist = [CACHE_NAME];
   event.waitUntil(
     caches.keys().then(cacheNames => {
       return Promise.all(
-        cacheNames.filter(name => name !== CACHE_NAME).map(name => caches.delete(name))
+        cacheNames.map(cacheName => {
+          if (cacheWhitelist.indexOf(cacheName) === -1) {
+            return caches.delete(cacheName);
+          }
+        })
       );
     })
   );

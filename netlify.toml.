@@ -1,7 +1,13 @@
-# Fichier de configuration pour le déploiement sur Netlify
-
+# Configuration pour le build
 [build]
-  # Il n'y a pas de commande de build à exécuter pour ce projet
+  # Dossier à publier. Le point "." signifie le dossier racine du projet.
+  publish = "./"
+  # Aucune commande de build n'est nécessaire car c'est un site statique.
   command = ""
-  # Le dossier à publier est la racine du projet
-  publish = "."
+
+# Règle de redirection pour les applications à page unique (SPA)
+# Cela garantit que même si l'utilisateur rafraîchit une "page", il revient bien à l'index.html
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
