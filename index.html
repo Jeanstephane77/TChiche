@@ -4,83 +4,325 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>T’chiche v2.0</title>
-    <meta name="theme-color" content="#ff69b4"/>
-    <link rel="stylesheet" href="styles.css">
+    <title>T'chiche v2.0</title>
     <link rel="manifest" href="manifest.json">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0d021f;
+            --card-bg-color: rgba(10, 5, 20, 0.5);
+            --primary-color: #ff69b4;
+            --text-color: #f0e6ff;
+            --font-ui: 'Montserrat', sans-serif;
+            --font-title: 'Caveat', cursive;
+            --neon-shadow: 0 0 5px var(--primary-color), 0 0 10px var(--primary-color);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-ui);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 20px;
+            background-image: radial-gradient(circle at top right, rgba(255, 105, 180, 0.1), transparent 40%),
+                              radial-gradient(circle at bottom left, rgba(128, 0, 128, 0.1), transparent 40%);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            padding: 30px;
+            background-color: var(--card-bg-color);
+            border: 1px solid rgba(255, 105, 180, 0.2);
+            border-radius: 20px;
+            box-shadow: 0 0 30px rgba(255, 105, 180, 0.1);
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .main-title {
+            font-family: var(--font-title);
+            font-size: 4.5rem;
+            color: var(--primary-color);
+            text-shadow: var(--neon-shadow);
+            margin-bottom: 30px;
+            letter-spacing: 2px;
+        }
+
+        .setup-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid rgba(255, 105, 180, 0.1);
+            border-radius: 15px;
+            background: rgba(0,0,0,0.2);
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 400;
+        }
+
+        .level-selector {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .btn {
+            background: transparent;
+            border: 1px solid var(--primary-color);
+            color: var(--primary-color);
+            padding: 12px 15px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: var(--font-ui);
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .btn:hover {
+            background-color: var(--primary-color);
+            color: var(--bg-color);
+            box-shadow: var(--neon-shadow);
+        }
+
+        .btn.selected {
+            background-color: var(--primary-color);
+            color: var(--bg-color);
+            box-shadow: var(--neon-shadow);
+        }
+
+        .player-list .player-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .player-list input {
+            flex-grow: 1;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255, 105, 180, 0.3);
+            color: var(--text-color);
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .remove-player-btn {
+            background: none;
+            border: none;
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+
+        #add-player-btn, #toggle-custom-challenge-btn {
+            margin-top: 10px;
+            width: 100%;
+        }
+
+        .custom-challenge-form {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 10px;
+        }
+
+        .custom-challenge-form.active {
+            display: block;
+        }
+
+        .custom-challenge-form select, .custom-challenge-form textarea {
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 10px;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255, 105, 180, 0.3);
+            color: var(--text-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            resize: vertical;
+        }
+
+        #start-game-btn {
+            font-size: 1.5rem;
+            width: 100%;
+            padding: 15px;
+            margin-top: 20px;
+            background: var(--primary-color);
+            color: var(--bg-color);
+            box-shadow: var(--neon-shadow);
+        }
+
+        /* --- Game Screen --- */
+        #game-header {
+            margin-bottom: 20px;
+        }
+
+        #turn-indicator {
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+
+        #challenge-card {
+            min-height: 250px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 30px;
+            margin-bottom: 30px;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--primary-color);
+            border-radius: 20px;
+            box-shadow: inset 0 0 15px rgba(255, 105, 180, 0.2);
+        }
+
+        #challenge-text {
+            font-family: var(--font-title);
+            font-size: 2.5rem;
+            line-height: 1.4;
+        }
+
+        .game-controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .game-controls .btn {
+            flex-grow: 1;
+        }
+
+        #next-player-btn {
+            width: 100%;
+        }
+
+
+        /* Responsive Design */
+        @media (max-width: 540px) {
+            .container {
+                padding: 20px;
+                margin: 10px;
+            }
+
+            h2 {
+                font-size: 1.3rem;
+            }
+        }
+
+        @media (max-width: 420px) {
+            .main-title {
+                font-size: 3.5rem; /* Réduction de la taille pour les petits écrans */
+            }
+            
+            .level-selector {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
+    <div class="container">
+        <!-- ===== Écran de Démarrage ===== -->
+        <div id="start-screen" class="screen active">
+            <h1 class="main-title">T'chiche ? 😈🔥</h1>
 
-    <!-- Écran de démarrage -->
-    <div id="start-screen" class="screen active">
-        <div class="container">
-            <h1>T'chiche ? 😈🔥</h1>
-            
-            <div class="settings-group">
+            <!-- Section 1: Choix du niveau -->
+            <div class="setup-section">
                 <h2>1. Choisissez le niveau</h2>
                 <div class="level-selector">
-                    <button class="level-btn" data-level="1">Phase 1 – Préliminaires</button>
-                    <button class="level-btn" data-level="2">Phase 2 – Plus en profondeur</button>
-                    <button class="level-btn" data-level="3">Phase 3 – Hors de contrôle</button>
-                    <button class="level-btn" data-level="4">Phase 4 – Transcendance</button>
+                    <button class="btn level-btn selected" data-level="1">Phase 1 - Préliminaires</button>
+                    <button class="btn level-btn" data-level="2">Phase 2 - Plus en profondeur</button>
+                    <button class="btn level-btn" data-level="3">Phase 3 - Hors de contrôle</button>
+                    <button class="btn level-btn" data-level="4">Phase 4 - Transcendance</button>
                 </div>
             </div>
-            
-            <div class="settings-group">
+
+            <!-- Section 2: Ajout des joueurs -->
+            <div class="setup-section">
                 <h2>2. Ajoutez les joueur·se·s</h2>
-                <div id="players-list">
-                    <div class="player-input-group">
-                        <input type="text" class="player-name" placeholder="Prénom Joueur/se 1" required>
+                <div id="player-list" class="player-list">
+                    <div class="player-item">
+                        <input type="text" class="player-name-input" placeholder="Prénom Joueur/Joueuse 1" value="">
                     </div>
                 </div>
-                <button id="add-player-btn">+ Ajouter un·e joueur·se</button>
-                <button id="add-custom-challenges-btn">Ajouter mes propres défis</button>
+                <button id="add-player-btn" class="btn">+ Ajouter un·e joueur·se</button>
+                <button id="toggle-custom-challenge-btn" class="btn">Ajouter mes propres défis</button>
             </div>
 
-            <button id="start-game-btn" class="cta-btn" disabled>T'chiche ?</button>
-        </div>
-    </div>
+            <!-- Section 3: Ajout de défis personnalisés (cachée par défaut) -->
+            <div id="custom-challenge-form" class="custom-challenge-form setup-section">
+                <h2>Ajouter un défi personnalisé</h2>
+                <select id="custom-challenge-level">
+                    <option value="1">Phase 1 - Préliminaires</option>
+                    <option value="2">Phase 2 - Plus en profondeur</option>
+                    <option value="3">Phase 3 - Hors de contrôle</option>
+                    <option value="4">Phase 4 - Transcendance</option>
+                </select>
+                <select id="custom-challenge-type">
+                    <option value="truth">Vérité</option>
+                    <option value="dare">Action</option>
+                </select>
+                <textarea id="custom-challenge-text" placeholder="Écrivez votre défi ici..."></textarea>
+                <button id="save-custom-challenge-btn" class="btn">Sauvegarder le défi</button>
+            </div>
 
-    <!-- Écran de jeu -->
-    <div id="game-screen" class="screen">
-        <div class="container">
-            <h2 id="turn-indicator"></h2>
+            <button id="start-game-btn">T'chiche ?</button>
+        </div>
+
+        <!-- ===== Écran de Jeu ===== -->
+        <div id="game-screen" class="screen">
+            <div id="game-header">
+                <h2 id="turn-indicator">Au tour de ...</h2>
+            </div>
             <div id="challenge-card">
                 <p id="challenge-text">Préparez-vous...</p>
             </div>
-            <div class="game-buttons">
-                <button id="truth-btn" class="choice-btn">Vérité</button>
-                <button id="dare-btn" class="choice-btn">Action</button>
-                <button id="random-btn" class="choice-btn">Défi Aléatoire</button>
-                <button id="next-player-btn" class="choice-btn">Joueur·se Suivant·e</button>
+            <div class="game-controls">
+                <button id="truth-btn" class="btn">Vérité</button>
+                <button id="dare-btn" class="btn">Action</button>
+                <button id="random-btn" class="btn">Défi Aléatoire !</button>
             </div>
-        </div>
-    </div>
-
-    <!-- Modal pour ajouter des défis personnalisés -->
-    <div id="custom-challenge-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn">&times;</span>
-            <h2>Ajouter un défi personnalisé</h2>
-            <div class="custom-form">
-                <label for="custom-level-select">Choisir le niveau :</label>
-                <select id="custom-level-select">
-                    <option value="1">Phase 1 – Préliminaires</option>
-                    <option value="2">Phase 2 – Plus en profondeur</option>
-                    <option value="3">Phase 3 – Hors de contrôle</option>
-                    <option value="4">Phase 4 – Transcendance</option>
-                </select>
-                <label for="custom-type-select">Choisir le type :</label>
-                <select id="custom-type-select">
-                    <option value="truths">Vérité</option>
-                    <option value="dares">Action</option>
-                </select>
-                <textarea id="custom-challenge-input" placeholder="Écrivez votre défi ici..."></textarea>
-                <button id="save-custom-challenge-btn">Sauvegarder le défi</button>
-            </div>
+             <button id="next-player-btn" class="btn">Joueur·se Suivant·e</button>
         </div>
     </div>
 
@@ -90,11 +332,12 @@
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('/service-worker.js')
-                    .then(registration => console.log('ServiceWorker registration successful:', registration))
-                    .catch(error => console.log('ServiceWorker registration failed:', error));
+                    .then(registration => console.log('ServiceWorker registration successful: ', registration.scope))
+                    .catch(error => console.log('ServiceWorker registration failed: ', error));
             });
         }
     </script>
 </body>
 </html>
+
 
