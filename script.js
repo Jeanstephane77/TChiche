@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', () => {
+ document.addEventListener('DOMContentLoaded', () => {
     // --- DOM Elements ---
     const startScreen = document.getElementById('start-screen');
     const gameScreen = document.getElementById('game-screen');
@@ -19,86 +19,86 @@ document.addEventListener('DOMContentLoaded', () => {
     let levelProgress = 0;
     const challengesToLevelUp = 6; // Number of challenges to complete before leveling up
 
-    // --- Challenges Data ---
+    // --- Challenges Data (Updated Phrasing) ---
     const truths = {
         1: [
-            "Quelle est ta plus grande peur inavouable ?",
-            "Raconte ta pire honte.",
-            "Quelle partie de mon corps préfères-tu ?",
-            "Quelle est ta pire habitude en amour ?",
-            "Raconte un rencard complètement raté.",
-            "La première chose que tu as pensée en me voyant ?",
-            "Quel est ton surnom le plus embarrassant ?",
-            "As-tu déjà stalké un ex sur les réseaux sociaux ?"
+            "T'chiche de me dire quelle est ta plus grande peur inavouable ?",
+            "T'chiche de me raconter ta pire honte.",
+            "T'chiche de me dire quelle partie de mon corps tu préfères.",
+            "T'chiche de me dire quelle est ta pire habitude en amour.",
+            "T'chiche de me raconter un rencard complètement raté.",
+            "T'chiche de me dire la première chose que tu as pensée en me voyant.",
+            "T'chiche de me révéler ton surnom le plus embarrassant.",
+            "T'chiche de m'avouer si tu as déjà stalké un ex sur les réseaux sociaux."
         ],
         2: [
-            "Quel est ton plus gros fantasme jamais avoué ?",
-            "Quelle est la chose la plus folle que tu aies faite par désir ?",
-            "As-tu déjà fait un rêve érotique avec quelqu'un d'autre depuis qu'on se connaît ?",
-            "Quelle est la zone de ton corps que tu aimes le moins qu'on touche ? Et le plus ?",
-            "As-tu déjà menti pour séduire ? Si oui, sur quoi ?",
-            "Quelle est ta plus grande addiction secrète ?",
-            "Décris le baiser parfait pour toi."
+            "T'chiche de me décrire ton plus gros fantasme jamais avoué.",
+            "T'chiche de me dire la chose la plus folle que tu aies faite par désir.",
+            "T'chiche de me dire si tu as déjà fait un rêve érotique avec quelqu'un d'autre depuis qu'on se connaît.",
+            "T'chiche de me dire quelle zone de ton corps tu aimes le moins qu'on touche, et celle que tu aimes le plus.",
+            "T'chiche de me dire si tu as déjà menti pour séduire, et sur quoi.",
+            "T'chiche de me révéler ta plus grande addiction secrète.",
+            "T'chiche de me décrire le baiser parfait."
         ],
         3: [
-            "As-tu déjà fait l’amour dans un lieu public ? Si non, où rêverais-tu de le faire ?",
-            "Raconte en détail une scène d'un film qui t'a vraiment excité(e).",
-            "Quel est ton plus grand fantasme 'interdit' ou tabou ?",
-            "Quelle est la limite que tu ne franchirais jamais au lit ?",
-            "As-tu déjà filmé ou photographié un moment intime ?",
-            "Avec combien de personnes as-tu vraiment pris ton pied ?",
-            "Quelle pratique sexuelle t'intrigue le plus en secret ?"
+            "T'chiche de me dire si tu as déjà fait l’amour dans un lieu public (et où tu rêverais de le faire).",
+            "T'chiche de me raconter en détail une scène de film qui t'a vraiment excité(e).",
+            "T'chiche de me révéler ton plus grand fantasme 'interdit' ou tabou.",
+            "T'chiche de me dire quelle est la limite que tu ne franchirais jamais au lit.",
+            "T'chiche de me dire si tu as déjà filmé ou photographié un de tes moments intimes.",
+            "T'chiche de me dire avec combien de personnes tu as vraiment pris ton pied.",
+            "T'chiche de me dire quelle pratique sexuelle t'intrigue le plus en secret."
         ],
         4: [
-            "Quelle est la chose non-sexuelle que je fais qui t'excite le plus ?",
-            "Si tu pouvais avoir un 'laissez-passer' pour une seule chose avec moi ce soir, que demanderais-tu ?",
-            "Quelle odeur sur mon corps te rend complètement fou/folle ?",
-            "Décris le son que tu préfères m'entendre faire.",
-            "Quelle est la pensée la plus coquine que tu aies eue à mon sujet aujourd'hui ?",
-            "Si nos corps pouvaient parler, que dirait le tien au mien maintenant ?",
-            "Quel est le mot que tu adorerais m'entendre te murmurer pendant l'amour ?",
-            "As-tu déjà fantasmé sur moi dans un contexte de domination ou de soumission ?",
-            "Quelle partie de ma personnalité trouves-tu la plus sexy ?",
-            "S'il n'y avait aucune conséquence, quelle est la chose la plus folle que tu voudrais expérimenter avec moi ?"
+            "T'chiche de me dire la chose non-sexuelle que je fais qui t'excite le plus.",
+            "T'chiche de me dire, si tu avais un 'laissez-passer' pour une seule chose avec moi ce soir, ce que tu demanderais.",
+            "T'chiche de me dire quelle odeur sur mon corps te rend complètement fou/folle.",
+            "T'chiche de me décrire le son que tu préfères m'entendre faire.",
+            "T'chiche de me dire la pensée la plus coquine que tu aies eue à mon sujet aujourd'hui.",
+            "T'chiche de me dire ce que ton corps dirait au mien en ce moment, s'il pouvait parler.",
+            "T'chiche de me dire le mot que tu adorerais m'entendre te murmurer pendant l'amour.",
+            "T'chiche de m'avouer si tu as déjà fantasmé sur moi dans un contexte de domination ou de soumission.",
+            "T'chiche de me dire quelle partie de ma personnalité tu trouves la plus sexy.",
+            "T'chiche de me dire la chose la plus folle que tu voudrais expérimenter avec moi, s'il n'y avait aucune conséquence."
         ]
     };
 
     const dares = {
         1: [
-            "Chuchote un compliment très personnel à l'oreille de l'autre.",
-            "Danse un slow langoureux sans musique pendant 30 secondes.",
-            "Regarde l'autre dans les yeux sans parler jusqu'à ce qu'il/elle craque.",
-            "Prends la main de ton/ta partenaire et embrasse-la tendrement.",
-            "Dis un mot coquin avec ta voix la plus innocente.",
-            "Fais un câlin de 20 secondes, les yeux fermés."
+            "T'chiche de me chuchoter un compliment très personnel à l'oreille.",
+            "T'chiche de danser un slow langoureux avec moi, sans musique, pendant 30 secondes.",
+            "T'chiche de me regarder dans les yeux sans parler jusqu'à ce que je craque.",
+            "T'chiche de prendre ma main et de l'embrasser tendrement.",
+            "T'chiche de me dire un mot coquin avec ta voix la plus innocente.",
+            "T'chiche de me faire un câlin de 20 secondes, les yeux fermés."
         ],
         2: [
-            "Fais un massage sensuel d'une minute sur une zone choisie par l'autre (nuque, pieds...).",
-            "Rejoue la scène de votre premier baiser.",
-            "Fais une déclaration de désir en n'utilisant que des métaphores culinaires.",
-            "Imite le gémissement d'un personnage de film célèbre.",
-            "Demande à l'autre où il/elle rêve d'être touché(e) maintenant, et effleure cette zone.",
-            "Avec ton doigt, dessine un mot secret sur le dos de l'autre, qui doit le deviner."
+            "T'chiche de me faire un massage sensuel d'une minute sur une zone que je choisis (nuque, pieds...).",
+            "T'chiche de rejouer la scène de notre premier baiser.",
+            "T'chiche de me faire une déclaration de désir en n'utilisant que des métaphores culinaires.",
+            "T'chiche d'imiter pour moi le gémissement d'un personnage de film célèbre.",
+            "T'chiche de me demander où je rêve d'être touché(e) maintenant, et d'effleurer cette zone.",
+            "T'chiche de dessiner un mot secret avec ton doigt sur mon dos, que je dois deviner."
         ],
         3: [
-            "Embrasse ton/ta partenaire à un endroit où tu ne l'as jamais embrassé(e).",
-            "Décris à voix haute ce que tu aimerais qu'on te fasse juste après la partie.",
-            "Enlève un vêtement de ton choix (ou celui de ton/ta partenaire).",
-            "Propose un scénario de jeu de rôle que tu aimerais tester un jour.",
-            "Simule un baiser passionné à quelques millimètres des lèvres de l'autre, sans jamais le/la toucher.",
-            "Fais deviner ta zone érogène préférée en la stimulant discrètement sur toi-même."
+            "T'chiche de m'embrasser à un endroit où tu ne m'as jamais embrassé(e).",
+            "T'chiche de me décrire à voix haute ce que tu aimerais que je te fasse juste après la partie.",
+            "T'chiche d'enlever un vêtement de ton choix (le tien ou le mien).",
+            "T'chiche de me proposer un scénario de jeu de rôle que tu aimerais tester un jour.",
+            "T'chiche de simuler un baiser passionné à quelques millimètres de mes lèvres, sans jamais me toucher.",
+            "T'chiche de me faire deviner ta zone érogène préférée en la stimulant discrètement sur toi-même."
         ],
         4: [
-            "Bande les yeux de l'autre et fais-lui deviner 3 parties de ton corps avec ses lèvres.",
-            "Murmure à son oreille la description exacte de ce que tu aimerais lui faire dans 10 minutes.",
-            "Utilise un glaçon (ou un doigt froid) pour tracer un chemin sur son corps. L'autre guide avec 'plus chaud' ou 'plus froid'.",
-            "Pendant les 3 prochains tours, appelle ton/ta partenaire 'Maître' ou 'Maîtresse'.",
-            "Laisse l'autre te placer dans la position de son choix, et restez-y 1 minute sans bouger.",
-            "Enlève un de tes vêtements en le/la regardant droit dans les yeux, le plus lentement possible.",
-            "Donne un baiser 'à l'aveugle' : fermez les yeux et essayez de vous embrasser.",
-            "Écris un mot coquin avec ton doigt sur le corps de l'autre, qui doit l'effacer avec sa bouche.",
-            "Fais une 'dégustation' de sa peau : embrasse 3 endroits et décris leur 'goût'.",
-            "Fais un strip-tease d'un seul accessoire de la manière la plus sexy possible."
+            "T'chiche de me bander les yeux et de me faire deviner 3 parties de ton corps avec mes lèvres.",
+            "T'chiche de me murmurer à l'oreille la description exacte de ce que tu aimerais me faire dans 10 minutes.",
+            "T'chiche d'utiliser un glaçon (ou un doigt froid) pour tracer un chemin sur mon corps, pendant que je te guide avec 'plus chaud' ou 'plus froid'.",
+            "T'chiche de m'appeler 'Maître' ou 'Maîtresse' pendant les 3 prochains tours.",
+            "T'chiche de me laisser te placer dans la position de mon choix, et de rester ainsi 1 minute sans bouger.",
+            "T'chiche d'enlever un de tes vêtements en me regardant droit dans les yeux, le plus lentement possible.",
+            "T'chiche de me donner un baiser 'à l'aveugle' : on ferme les yeux et on essaie de s'embrasser.",
+            "T'chiche d'écrire un mot coquin avec ton doigt sur mon corps, que je dois effacer avec ma bouche.",
+            "T'chiche de faire une 'dégustation' de ma peau : m'embrasser à 3 endroits et décrire leur 'goût'.",
+            "T'chiche de faire un strip-tease d'un seul de tes accessoires de la manière la plus sexy possible."
         ]
     };
 
@@ -114,9 +114,8 @@ document.addEventListener('DOMContentLoaded', () => {
             gameScreen.classList.add('active');
             updateTurnIndicator();
         } else {
-            // Replaced alert with a visual cue
-            player1Input.style.borderColor = player1Name ? 'var(--primary-color)' : 'red';
-            player2Input.style.borderColor = player2Name ? 'var(--primary-color)' : 'red';
+            // Using a custom alert is better for PWA, but for simplicity, we keep the alert.
+            alert('Veuillez entrer les prénoms des deux joueurs.');
         }
     }
 
@@ -169,13 +168,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const randomIndex = Math.floor(Math.random() * challengePool.length);
-        const selectedChallenge = challengePool[randomIndex];
+        let selectedChallenge = challengePool[randomIndex];
         
-        // Add player name to the challenge
-        const personalizedChallenge = selectedChallenge.replace("l'autre", players[(currentPlayerIndex + 1) % 2])
-                                                      .replace("ton/ta partenaire", players[(currentPlayerIndex + 1) % 2]);
-
-        displayChallenge(personalizedChallenge);
+        // This logic is simplified as the phrasing now directly addresses the other player.
+        // We just need to display it.
+        
+        displayChallenge(selectedChallenge);
         updateProgressBar();
         switchTurn();
     }

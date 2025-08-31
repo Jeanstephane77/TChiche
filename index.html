@@ -5,17 +5,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>T’chiche</title>
-    <meta name="theme-color" content="#c832ff"/>
+    <meta name="theme-color" content="#a855f7"/>
     <link rel="manifest" href="/manifest.json">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #0d021f;
-            --text-color: #ffffff;
-            --primary-color: #c832ff;
-            --card-bg-color: rgba(26, 1, 48, 0.7);
+            --bg-color: #120c18; /* Un violet très sombre */
+            --text-color: #f0e8ff; /* Un blanc légèrement lavande */
+            --primary-color: #a855f7; /* Violet néon principal */
+            --secondary-color: #d946ef; /* Rose néon secondaire */
+            --card-bg-color: rgba(26, 18, 38, 0.8); /* Fond de carte translucide */
             --font-ui: 'Montserrat', sans-serif;
             --font-challenge: 'Caveat', cursive;
         }
@@ -28,44 +29,52 @@
 
         body {
             background-color: var(--bg-color);
+            background-image: radial-gradient(circle at 10% 20%, rgba(168, 85, 247, 0.2) 0%, transparent 50%),
+                              radial-gradient(circle at 80% 90%, rgba(217, 70, 239, 0.2) 0%, transparent 50%);
             color: var(--text-color);
             font-family: var(--font-ui);
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            overflow: hidden;
             text-align: center;
+            overflow-x: hidden; /* Empêche le scroll horizontal */
         }
 
         .screen {
             display: none;
             width: 100%;
-            max-width: 400px;
+            max-width: 420px;
             padding: 20px;
-        }
-
-        .screen.active {
-            display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
         }
 
+        .screen.active {
+            display: flex;
+            animation: fadeIn 0.8s ease-in-out;
+        }
+
         /* --- Start Screen --- */
         #start-screen h1 {
-            font-family: var(--font-ui);
-            font-weight: 600;
-            font-size: 3.5rem;
-            color: var(--primary-color);
-            text-shadow: 0 0 5px var(--primary-color), 0 0 15px var(--primary-color), 0 0 30px var(--primary-color);
-            margin-bottom: 15px;
+            font-family: var(--font-challenge);
+            font-size: 4.5rem;
+            color: var(--text-color);
+            text-shadow: 0 0 5px var(--primary-color), 0 0 15px var(--primary-color), 0 0 30px var(--secondary-color);
+            margin-bottom: 5px;
+        }
+
+        #start-screen h1 span {
+            font-size: 3rem;
+            vertical-align: middle;
         }
 
         #start-screen p {
             font-size: 1.1rem;
-            margin-bottom: 30px;
-            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 40px;
+            color: var(--text-color);
+            opacity: 0.9;
         }
 
         .input-group {
@@ -76,82 +85,87 @@
         .input-group input {
             width: 100%;
             padding: 15px;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             border: 1px solid var(--primary-color);
             border-radius: 50px;
-            background-color: transparent;
+            background-color: var(--card-bg-color);
             color: var(--text-color);
             font-size: 1rem;
             text-align: center;
             transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(168, 85, 247, 0.3) inset;
         }
 
         .input-group input::placeholder {
-            color: rgba(255, 255, 255, 0.5);
+            color: rgba(240, 232, 255, 0.5);
         }
 
         .input-group input:focus {
             outline: none;
-            box-shadow: 0 0 15px var(--primary-color);
+            box-shadow: 0 0 15px rgba(168, 85, 247, 0.7) inset, 0 0 10px var(--primary-color);
+            border-color: var(--secondary-color);
         }
-
+        
         #start-btn {
-            background: transparent;
-            color: var(--text-color);
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            color: white;
             font-weight: 600;
             padding: 15px 30px;
-            border: 2px solid var(--primary-color);
+            border: none;
             border-radius: 50px;
             cursor: pointer;
             font-size: 1.2rem;
-            box-shadow: 0 0 15px var(--primary-color);
-            transition: all 0.3s ease;
             text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 0 15px var(--primary-color), 0 0 25px var(--secondary-color);
+            transition: all 0.3s ease;
         }
 
         #start-btn:hover {
-            background: var(--primary-color);
-            transform: scale(1.05);
-            box-shadow: 0 0 25px var(--primary-color);
+            transform: scale(1.05) translateY(-3px);
+            box-shadow: 0 0 25px var(--primary-color), 0 0 40px var(--secondary-color);
         }
 
         /* --- Game Screen --- */
         #game-screen {
             justify-content: space-between;
-            height: 100vh;
+            min-height: 100vh;
         }
 
         .game-header {
             width: 100%;
+            margin-bottom: 20px;
         }
 
         #turn-indicator {
             font-size: 1.5rem;
             margin-bottom: 15px;
-            color: var(--primary-color);
+            color: var(--text-color);
+            font-weight: bold;
             text-shadow: 0 0 8px var(--primary-color);
         }
 
         .progress-container p {
             font-size: 0.8rem;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
             text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         #progress-bar-container {
             width: 100%;
             height: 10px;
             background-color: var(--card-bg-color);
-            border: 1px solid var(--primary-color);
             border-radius: 5px;
             overflow: hidden;
+            border: 1px solid var(--primary-color);
         }
 
         #progress-bar {
             width: 0%;
             height: 100%;
-            background-color: var(--primary-color);
-            box-shadow: 0 0 8px var(--primary-color);
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            box-shadow: 0 0 8px var(--secondary-color);
             transition: width 0.5s ease-in-out;
         }
 
@@ -164,41 +178,43 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 20px;
-            box-shadow: 0 0 10px rgba(200, 50, 255, 0.5);
-            animation: fadeIn 0.5s ease;
+            padding: 25px;
+            box-shadow: 0 0 20px rgba(168, 85, 247, 0.4);
             backdrop-filter: blur(5px);
+            margin: 20px 0;
         }
 
         #challenge-text {
             font-family: var(--font-challenge);
             font-size: 2.2rem;
             line-height: 1.4;
+            animation: fadeIn 0.5s ease;
         }
 
         .button-container {
             width: 100%;
             display: flex;
             justify-content: space-around;
+            margin-top: 20px;
         }
 
         .choice-btn {
             padding: 15px 0;
-            width: 45%;
+            width: 48%;
             background: transparent;
             border: 2px solid var(--primary-color);
-            color: var(--text-color);
+            color: var(--primary-color);
             font-size: 1.2rem;
             font-weight: 600;
             border-radius: 50px;
             cursor: pointer;
             transition: all 0.3s ease;
             text-shadow: 0 0 5px var(--primary-color);
-            box-shadow: 0 0 10px var(--primary-color);
         }
 
         .choice-btn:hover {
             background-color: var(--primary-color);
+            color: var(--bg-color);
             box-shadow: 0 0 20px var(--primary-color);
             transform: translateY(-5px);
         }
@@ -208,8 +224,8 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background-color: rgba(200, 50, 255, 0.9);
-            color: var(--text-color);
+            background-color: rgba(217, 70, 239, 0.95);
+            color: white;
             padding: 20px 40px;
             border-radius: 10px;
             font-size: 1.5rem;
@@ -218,16 +234,12 @@
             opacity: 0;
             transition: opacity 0.5s ease;
             pointer-events: none;
-            border: 1px solid var(--primary-color);
-            box-shadow: 0 0 20px var(--primary-color);
-        }
-
-        .hidden {
-            display: none !important;
+            box-shadow: 0 0 25px var(--secondary-color);
+            text-shadow: 0 0 5px rgba(0,0,0,0.5);
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.9); }
+            from { opacity: 0; transform: scale(0.95); }
             to { opacity: 1; transform: scale(1); }
         }
     </style>
@@ -235,13 +247,13 @@
 <body>
 
     <div id="start-screen" class="screen active">
-        <h1>T'Chiche ? 😈🔥</h1>
+        <h1>T'chiche ? 😈🔥</h1>
         <p>Le jeu chaud pour adultes</p>
         <div class="input-group">
             <input type="text" id="player1" placeholder="Prénom du Joueur 1" required>
             <input type="text" id="player2" placeholder="Prénom du Joueur 2" required>
         </div>
-        <button id="start-btn">LANCER LE JEU</button>
+        <button id="start-btn">Lancer le jeu</button>
     </div>
 
     <div id="game-screen" class="screen">
