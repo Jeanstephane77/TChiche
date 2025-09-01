@@ -1,268 +1,186 @@
-'use strict';
-
 document.addEventListener('DOMContentLoaded', () => {
-  // ------- State -------
-  let players = ['Joueur·se 1'];
-  let selectedLevel = 1; // toujours un nombre
-  const MAX_PLAYERS = 10;
-  let currentPlayerIndex = 0;
-
-  // Défis personnalisés par niveau
-  const customChallenges = {
-    truths: { 1: [], 2: [], 3: [], 4: [] },
-    dares:  { 1: [], 2: [], 3: [], 4: [] }
-  };
-
-  // ------- DOM -------
-  const $ = (sel) => document.querySelector(sel);
-  const $$ = (sel) => Array.from(document.querySelectorAll(sel));
-
-  const setupScreen = $('#setup-screen');
-  const gameScreen  = $('#game-screen');
-
-  const levelButtons   = $$('.level-btn');
-  const playerList     = $('#player-list');
-  const addPlayerBtn   = $('#add-player-btn');
-  const startGameBtn   = $('#start-game-btn');
-
-  // Modal (facultatif selon ton HTML)
-  const addCustomBtn           = $('#add-custom-btn');
-  const customChallengeModal   = $('#custom-challenge-modal');
-  const closeModalBtn          = $('#close-modal-btn');
-  const saveChallengeBtn       = $('#save-challenge-btn');
-  const customChallengeText    = $('#custom-challenge-text');
-  const customLevelSelect      = $('#custom-level-select');
-  const customTypeSelect       = $('#custom-type-select');
-
-  // Écran de jeu
-  const turnIndicator  = $('#turn-indicator');
-  const challengeText  = $('#challenge-text');
-  const cardContent    = $('#card-content');
-  const authorTag      = $('#author-tag');
-  const truthBtn       = $('#truth-btn');
-  const dareBtn        = $('#dare-btn');
-  const randomBtn      = $('#random-btn');
-  const nextPlayerBtn  = $('#next-player-btn');
-
-  // ------- Helpers -------
-  const asNumber = (v) => typeof v === 'number' ? v : Number(v);
-
-  const ensureArray = (val) => Array.isArray(val) ? val : [];
-  const getLevel = () => asNumber(selectedLevel) || 1;
-
-  const show = (el) => { if (el) { el.style.display = 'flex'; el.classList.add('active'); } };
-  const hide = (el) => { if (el) { el.style.display = 'none'; el.classList.remove('active'); } };
-
-  const safeChallenges = () => {
-    // data.js doit définir window.challenges = { truths: {1:[...]}, dares:{1:[...]} }
-    const base = window.challenges || {};
-    return {
-      truths: base.truths || {},
-      dares:  base.dares  || {}
+    // --- State Variables ---
+    let players = ['Joueur·se 1'];
+    let selectedLevel = 1;
+    let customChallenges = {
+        truths: { 1: [], 2: [], 3: [], 4: [] },
+        dares: { 1: [], 2: [], 3: [], 4: [] }
     };
-  };
+    let currentPlayerIndex = 0;
 
-  const nextIndex = (i, len) => (i + 1) % Math.max(len, 1);
+    // --- DOM Elements (Setup Screen) ---
+    const setupScreen = document.getElementById('setup-screen');
+    const levelButtons = document.querySelectorAll('.level-btn');
+    const playerList = document.getElementById('player-list');
+    const addPlayerBtn = document.getElementById('add-player-btn');
+    const startGameBtn = document.getElementById('start-game-btn');
+    const addCustomBtn = document.getElementById('add-custom-btn');
+    const customChallengeModal = document.getElementById('custom-challenge-modal');
+    const closeModalBtn = document.getElementById('close-modal-btn');
+    const saveChallengeBtn = document.getElementById('save-challenge-btn');
+    const customChallengeText = document.getElementById('custom-challenge-text');
+    const customLevelSelect = document.getElementById('custom-level-select');
+    const customTypeSelect = document.getElementById('custom-type-select');
 
-  // ------- UI builders -------
-  function updatePlayerList() {
-    if (!playerList) return;
-    playerList.innerHTML = '';
-    players.forEach((player, index) => {
-      const input = document.createElement('input');
-      input.type = 'text';
-      input.value = player;
-      input.placeholder = `Prénom Joueur·se ${index + 1}`;
-      input.autocomplete = 'off';
-      input.addEventListener('input', (e) => {
-        players[index] = e.target.value;
-      });
-      playerList.appendChild(input);
-    });
-  }
+    // --- DOM Elements (Game Screen - declared but not assigned) ---
+    let gameScreen, turnIndicator, challengeText, cardContent, authorTag;
+    let truthBtn, dareBtn, randomBtn, nextPlayerBtn;
 
-  function selectLevel(levelLike) {
-    const level = asNumber(levelLike) || 1;
-    selectedLevel = level;
+    // This function initializes game screen elements and their listeners only when the game starts.
+    function initializeGameScreen() {
+        gameScreen = document.getElementById('game-screen');
+        turnIndicator = document.getElementById('turn-indicator');
+        challengeText = document.getElementById('challenge-text');
+        cardContent = document.getElementById('card-content');
+        authorTag = document.getElementById('author-tag');
+        truthBtn = document.getElementById('truth-btn');
+        dareBtn = document.getElementById('dare-btn');
+        randomBtn = document.getElementById('random-btn');
+        nextPlayerBtn = document.getElementById('next-player-btn');
 
-    if (levelButtons.length) {
-      levelButtons.forEach(btn => {
-        btn.classList.toggle('selected', asNumber(btn.dataset.level) === level);
-      });
-    }
-  }
-
-  function updateTurnIndicator() {
-    if (!turnIndicator) return;
-    const name = players[currentPlayerIndex] || 'Joueur·se';
-    turnIndicator.textContent = `Au tour de ${name}`;
-  }
-
-  function resetCard() {
-    if (challengeText) challengeText.textContent = 'Préparez-vous...';
-    if (authorTag)     authorTag.style.display = 'none';
-  }
-
-  // ------- Actions -------
-  function addPlayer(e) {
-    e?.preventDefault?.();
-    if (players.length >= MAX_PLAYERS) return;
-    players.push(`Joueur·se ${players.length + 1}`);
-    updatePlayerList();
-  }
-
-  function startGame(e) {
-    e?.preventDefault?.(); // évite un submit implicite si dans un <form>
-
-    if (!setupScreen || !gameScreen) return;
-
-    // Trim + filtre des vides
-    const validPlayers = players.map(p => (p || '').trim()).filter(Boolean);
-
-    if (validPlayers.length < 1) {
-      alert("Veuillez entrer au moins un nom de joueur.");
-      return;
+        // Attach listeners for game screen buttons
+        if (truthBtn) truthBtn.addEventListener('click', () => getChallenge('truth'));
+        if (dareBtn) dareBtn.addEventListener('click', () => getChallenge('dare'));
+        if (randomBtn) randomBtn.addEventListener('click', () => getChallenge('random'));
+        if (nextPlayerBtn) nextPlayerBtn.addEventListener('click', switchTurn);
     }
 
-    players = validPlayers;
-    currentPlayerIndex = 0;
-    hide(setupScreen);
-    show(gameScreen);
-    resetCard();
-    updateTurnIndicator();
-  }
 
-  function switchTurn(e) {
-    e?.preventDefault?.();
-    currentPlayerIndex = nextIndex(currentPlayerIndex, players.length);
-    updateTurnIndicator();
-    resetCard();
-  }
+    // --- Functions ---
 
-  function displayChallenge(text, author = null) {
-    if (!challengeText || !cardContent || !authorTag) return;
+    function updatePlayerList() {
+        if (!playerList) return;
+        playerList.innerHTML = '';
+        players.forEach((player, index) => {
+            const playerInput = document.createElement('input');
+            playerInput.type = 'text';
+            playerInput.value = player;
+            playerInput.placeholder = `Prénom Joueur·se ${index + 1}`;
+            playerInput.addEventListener('input', (e) => {
+                players[index] = e.target.value;
+            });
+            playerList.appendChild(playerInput);
+        });
+    }
 
-    // petite anim "fondu"
-    cardContent.style.opacity = 0;
-    window.setTimeout(() => {
-      challengeText.textContent = text || '—';
-      if (author) {
-        authorTag.textContent = `Proposé par ${author}`;
-        authorTag.style.display = 'block';
-      } else {
-        authorTag.style.display = 'none';
-      }
-      cardContent.style.opacity = 1;
-    }, 150);
-  }
+    function addPlayer() {
+        if (players.length < 10) {
+            players.push(`Joueur·se ${players.length + 1}`);
+            updatePlayerList();
+        }
+    }
 
-  function getChallenge(type, e) {
-    e?.preventDefault?.();
+    function selectLevel(level) {
+        selectedLevel = level;
+        levelButtons.forEach(button => {
+            button.classList.remove('selected');
+            if (button.dataset.level == level) {
+                button.classList.add('selected');
+            }
+        });
+    }
+    
+    function saveCustomChallenge() {
+        const customText = customChallengeText.value.trim();
+        const level = customLevelSelect.value;
+        const type = customTypeSelect.value;
 
-    try {
-      const lvl = getLevel();
-      const base = safeChallenges();
+        if (customText && level && type) {
+            customChallenges[type][level].push({ text: customText, author: 'vous' });
+            customChallengeText.value = '';
+            customChallengeModal.style.display = 'none';
+            alert('Défi ajouté !');
+        } else {
+            alert('Veuillez remplir tous les champs.');
+        }
+    }
 
-      const truthsBase   = ensureArray(base.truths[lvl]);
-      const daresBase    = ensureArray(base.dares[lvl]);
-      const truthsCustom = ensureArray(customChallenges.truths[lvl]);
-      const daresCustom  = ensureArray(customChallenges.dares[lvl]);
+    function startGame() {
+        const validPlayers = players.map(p => p.trim()).filter(p => p !== "");
 
-      const availableTruths = truthsBase.concat(truthsCustom);
-      const availableDares  = daresBase.concat(daresCustom);
+        if (validPlayers.length < 1) {
+            alert("Veuillez entrer au moins un nom de joueur.");
+            return;
+        }
+        
+        players = validPlayers;
 
-      let pool = [];
-      if (type === 'truth')   pool = availableTruths;
-      else if (type === 'dare')  pool = availableDares;
-      else pool = availableTruths.concat(availableDares);
+        // Initialize game screen elements now that we need them
+        initializeGameScreen();
 
-      if (!pool.length) {
-        displayChallenge(`Plus de défis disponibles à ce niveau. Ajoutez les vôtres ou changez de niveau.`);
-        return;
-      }
+        if (!setupScreen || !gameScreen) return;
+        
+        setupScreen.style.display = 'none';
+        gameScreen.style.display = 'flex';
+        updateTurnIndicator();
+    }
+    
+    function updateTurnIndicator() {
+        if (!turnIndicator) return;
+        turnIndicator.textContent = `Au tour de ${players[currentPlayerIndex]}`;
+    }
 
-      const challenge = pool[Math.floor(Math.random() * pool.length)];
-      if (challenge && typeof challenge === 'object') {
+    function switchTurn() {
+        currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
+        updateTurnIndicator();
+        if (challengeText) challengeText.textContent = 'Préparez-vous...';
+        if (authorTag) authorTag.style.display = 'none';
+    }
+
+    function getChallenge(type) {
+        const availableTruths = [...challenges.truths[selectedLevel], ...(customChallenges.truths[selectedLevel] || [])];
+        const availableDares = [...challenges.dares[selectedLevel], ...(customChallenges.dares[selectedLevel] || [])];
+
+        let pool = [];
+        if (type === 'truth') pool = availableTruths;
+        else if (type === 'dare') pool = availableDares;
+        else if (type === 'random') pool = [...availableTruths, ...availableDares];
+
+        if (pool.length === 0) {
+            displayChallenge(`Plus de défis disponibles dans cette catégorie ! Ajoutez les vôtres ou changez de niveau.`);
+            return;
+        }
+
+        const randomIndex = Math.floor(Math.random() * pool.length);
+        const challenge = pool[randomIndex];
         displayChallenge(challenge.text, challenge.author);
-      } else if (typeof challenge === 'string') {
-        // compat : si data.js stocke des strings simples
-        displayChallenge(challenge, null);
-      } else {
-        displayChallenge(`Défi introuvable. Réessayez.`);
-      }
-    } catch (err) {
-      console.error('Erreur getChallenge:', err);
-      displayChallenge(`Oups, petit souci technique. Réessayez.`);
     }
-  }
 
-  function saveCustomChallenge(e) {
-    e?.preventDefault?.();
-    if (!customChallengeText || !customLevelSelect || !customTypeSelect) return;
+    function displayChallenge(text, author = null) {
+        if (!challengeText || !cardContent || !authorTag) return;
+        challengeText.innerHTML = '';
+        cardContent.style.opacity = 0;
 
-    const text  = (customChallengeText.value || '').trim();
-    const lvl   = asNumber(customLevelSelect.value) || 1;
-    const type  = (customTypeSelect.value === 'truths') ? 'truths' : 'dares';
+        setTimeout(() => {
+            challengeText.textContent = text;
+            if (author) {
+                authorTag.textContent = `Proposé par ${author}`;
+                authorTag.style.display = 'block';
+            } else {
+                authorTag.style.display = 'none';
+            }
+            cardContent.style.opacity = 1;
+        }, 300);
+    }
 
-    if (!text) { alert('Veuillez écrire un défi.'); return; }
-
-    // Sécurité : ensure arrays existent
-    if (!Array.isArray(customChallenges[type][lvl])) customChallenges[type][lvl] = [];
-
-    customChallenges[type][lvl].push({ text, author: 'vous' });
-    customChallengeText.value = '';
-    if (customChallengeModal) customChallengeModal.style.display = 'none';
-    alert('Défi ajouté !');
-  }
-
-  // ------- Listeners -------
-  // Niveaux
-  if (levelButtons.length) {
-    levelButtons.forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.preventDefault();
-        selectLevel(btn.dataset.level);
-      });
+    // --- Event Listeners (Setup Screen) ---
+    levelButtons.forEach(button => {
+        button.addEventListener('click', () => selectLevel(button.dataset.level));
     });
-  }
 
-  // Setup
-  if (addPlayerBtn)  addPlayerBtn.addEventListener('click', addPlayer);
-  if (startGameBtn)  startGameBtn.addEventListener('click', startGame);
+    if (addPlayerBtn) addPlayerBtn.addEventListener('click', addPlayer);
+    if (startGameBtn) startGameBtn.addEventListener('click', startGame);
 
-  // Modal perso
-  if (addCustomBtn && customChallengeModal) {
-    addCustomBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      customChallengeModal.style.display = 'flex';
+    // Custom Challenge Modal
+    if (addCustomBtn) addCustomBtn.addEventListener('click', () => {
+        if (customChallengeModal) customChallengeModal.style.display = 'flex';
     });
-  }
-  if (closeModalBtn && customChallengeModal) {
-    closeModalBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      customChallengeModal.style.display = 'none';
+    if (closeModalBtn) closeModalBtn.addEventListener('click', () => {
+        if (customChallengeModal) customChallengeModal.style.display = 'none';
     });
-  }
-  if (saveChallengeBtn) saveChallengeBtn.addEventListener('click', saveCustomChallenge);
+    if (saveChallengeBtn) saveChallengeBtn.addEventListener('click', saveCustomChallenge);
 
-  // Jeu
-  if (truthBtn)      truthBtn.addEventListener('click', (e) => getChallenge('truth', e));
-  if (dareBtn)       dareBtn.addEventListener('click',  (e) => getChallenge('dare',  e));
-  if (randomBtn)     randomBtn.addEventListener('click', (e) => getChallenge('random', e));
-  if (nextPlayerBtn) nextPlayerBtn.addEventListener('click', switchTurn);
-
-  // ------- Init -------
-  selectLevel(1);
-  updatePlayerList();
-  hide(gameScreen);
-  show(setupScreen);
-
-  // (Optionnel) Log des erreurs non-capturées pour debug
-  window.addEventListener('error', (ev) => {
-    console.error('Global error:', ev.error || ev.message);
-  });
-  window.addEventListener('unhandledrejection', (ev) => {
-    console.error('Unhandled promise:', ev.reason);
-  });
+    // --- Initial state ---
+    selectLevel(1);
+    updatePlayerList();
 });
-
