@@ -1,4 +1,5 @@
- // --- State Variables ---
+ document.addEventListener('DOMContentLoaded', () => {
+    // --- State Variables ---
     let players = ['Joueur·se 1'];
     let selectedLevel = 1;
     let customChallenges = {
@@ -37,6 +38,7 @@
     // --- Functions ---
 
     function updatePlayerList() {
+        if (!playerList) return; // Safety check
         playerList.innerHTML = '';
         players.forEach((player, index) => {
             const playerInput = document.createElement('input');
@@ -58,6 +60,7 @@
     }
 
     function selectLevel(level) {
+        if (!levelButtons) return; // Safety check
         selectedLevel = level;
         levelButtons.forEach(button => {
             button.classList.remove('selected');
@@ -84,9 +87,9 @@
 
     function startGame() {
         // Filter out empty player names
-        players = players.filter(p => p.trim() !== '');
+        players = players.filter(p => p.trim() !== '' && p.trim() !== `Joueur·se ${players.indexOf(p) + 1}`);
         if (players.length < 1) {
-            alert("Veuillez entrer au moins un nom de joueur.");
+            alert("Veuillez entrer au moins un nom de joueur valide.");
             players = ['Joueur·se 1']; // Reset to one player to avoid errors
             updatePlayerList();
             return;
@@ -134,6 +137,7 @@
     }
 
     function displayChallenge(text, author = null) {
+        if (!challengeText || !cardContent || !authorTag) return; // Safety check
         challengeText.innerHTML = '';
         cardContent.style.opacity = 0;
 
@@ -163,10 +167,10 @@
 
     // Custom Challenge Modal
     if (addCustomBtn) addCustomBtn.addEventListener('click', () => {
-        customChallengeModal.style.display = 'flex';
+        if (customChallengeModal) customChallengeModal.style.display = 'flex';
     });
     if (closeModalBtn) closeModalBtn.addEventListener('click', () => {
-        customChallengeModal.style.display = 'none';
+        if (customChallengeModal) customChallengeModal.style.display = 'none';
     });
     if (saveChallengeBtn) saveChallengeBtn.addEventListener('click', saveCustomChallenge);
 
