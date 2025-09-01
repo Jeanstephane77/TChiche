@@ -1,208 +1,151 @@
  document.addEventListener('DOMContentLoaded', () => {
-    // --- DOM Elements ---
+    // --- Éléments du DOM ---
     const startScreen = document.getElementById('start-screen');
     const gameScreen = document.getElementById('game-screen');
     const levelButtons = document.querySelectorAll('.level-btn');
-    const playersList = document.getElementById('players-list');
+    const playerList = document.getElementById('player-list');
     const addPlayerBtn = document.getElementById('add-player-btn');
+    const toggleCustomChallengeBtn = document.getElementById('toggle-custom-challenge-btn');
+    const customChallengeForm = document.getElementById('custom-challenge-form');
+    const saveCustomChallengeBtn = document.getElementById('save-custom-challenge-btn');
     const startGameBtn = document.getElementById('start-game-btn');
     const turnIndicator = document.getElementById('turn-indicator');
-    const challengeCard = document.getElementById('challenge-card');
     const challengeText = document.getElementById('challenge-text');
     const truthBtn = document.getElementById('truth-btn');
     const dareBtn = document.getElementById('dare-btn');
     const randomBtn = document.getElementById('random-btn');
     const nextPlayerBtn = document.getElementById('next-player-btn');
 
-    // Modal elements
-    const customChallengeModal = document.getElementById('custom-challenge-modal');
-    const addCustomChallengesBtn = document.getElementById('add-custom-challenges-btn');
-    const closeModalBtn = document.querySelector('.close-btn');
-    const saveCustomChallengeBtn = document.getElementById('save-custom-challenge-btn');
+    // --- État du jeu ---
+    let gameState = {
+        players: [],
+        currentPlayerIndex: 0,
+        selectedLevel: 1,
+        customChallenges: JSON.parse(localStorage.getItem('customTchicheChallenges')) || {1:{truths:[],dares:[]}, 2:{truths:[],dares:[]}, 3:{truths:[],dares:[]}, 4:{truths:[],dares:[]}}
+    };
 
-    // --- Game State ---
-    let selectedLevel = null;
-    let players = [];
-    let currentPlayerIndex = 0;
-    let challengesData = { truths: {}, dares: {} }; // Will be populated from data.js and localStorage
+    // --- Fonctions de Configuration ---
 
-    // --- Functions ---
-
-    function initializeChallenges() {
-        // Deep copy of original data to avoid modifying it
-        challengesData.truths = JSON.parse(JSON.stringify(originalChallenges.truths));
-        challengesData.dares = JSON.parse(JSON.stringify(originalChallenges.dares));
-
-        // Load custom challenges from localStorage
-        const customChallenges = JSON.parse(localStorage.getItem('customTchicheChallenges')) || {};
-        for (const level in customChallenges.truths) {
-            if (!challengesData.truths[level]) challengesData.truths[level] = [];
-            challengesData.truths[level].push(...customChallenges.truths[level]);
-        }
-        for (const level in customChallenges.dares) {
-            if (!challengesData.dares[level]) challengesData.dares[level] = [];
-            challengesData.dares[level].push(...customChallenges.dares[level]);
-        }
-    }
-
-    function updateStartButtonState() {
-        const playerNames = Array.from(document.querySelectorAll('.player-name')).map(input => input.value.trim());
-        const allPlayersNamed = playerNames.every(name => name !== '') && playerNames.length > 0;
-        
-        if (selectedLevel && allPlayersNamed) {
-            startGameBtn.disabled = false;
-        } else {
-            startGameBtn.disabled = true;
-        }
+    function selectLevel(e) {
+        // CORRECTION : On enlève la classe 'selected' de TOUS les boutons
+        levelButtons.forEach(btn => btn.classList.remove('selected'));
+        // On ajoute la classe 'selected' uniquement au bouton cliqué
+        e.target.classList.add('selected');
+        gameState.selectedLevel = parseInt(e.target.dataset.level);
     }
 
     function addPlayer() {
-        if (playersList.children.length < 10) {
-            const playerIndex = playersList.children.length + 1;
-            const newPlayerInput = document.createElement('div');
-            newPlayerInput.classList.add('player-input-group');
-            newPlayerInput.innerHTML = `
-                <input type="text" class="player-name" placeholder="Prénom Joueur/se ${playerIndex}" required>
-                <button class="remove-player-btn">&times;</button>
-            `;
-            playersList.appendChild(newPlayerInput);
-
-            newPlayerInput.querySelector('.remove-player-btn').addEventListener('click', () => {
-                newPlayerInput.remove();
-                updatePlayerPlaceholders();
-                updateStartButtonState();
-            });
-
-            newPlayerInput.querySelector('.player-name').addEventListener('input', updateStartButtonState);
-        }
-        if (playersList.children.length === 10) {
-            addPlayerBtn.disabled = true;
-        }
-    }
-    
-    function updatePlayerPlaceholders() {
-        const inputs = playersList.querySelectorAll('.player-name');
-        inputs.forEach((input, index) => {
-            input.placeholder = `Prénom Joueur/se ${index + 1}`;
+        if (playerList.children.length >= 10) return;
+        const playerCount = playerList.children.length + 1;
+        const newPlayerItem = document.createElement('div');
+        newPlayerItem.classList.add('player-item');
+        newPlayerItem.innerHTML = `
+            <input type="text" class="player-name-input" placeholder="Prénom Joueur/Joueuse ${playerCount}" value="">
+            <button class="remove-player-btn">&times;</button>
+        `;
+        playerList.appendChild(newPlayerItem);
+        // On ajoute l'écouteur pour le nouveau bouton de suppression
+        newPlayerItem.querySelector('.remove-player-btn').addEventListener('click', (e) => {
+            e.target.parentElement.remove();
         });
-        addPlayerBtn.disabled = inputs.length >= 10;
-    }
-
-
-    function startGame() {
-        players = Array.from(document.querySelectorAll('.player-name')).map(input => input.value.trim());
-        if (players.length > 0 && selectedLevel) {
-            startScreen.classList.remove('active');
-            gameScreen.classList.add('active');
-            currentPlayerIndex = 0;
-            updateTurnIndicator();
-            challengeText.textContent = "Préparez-vous...";
-        }
-    }
-
-    function updateTurnIndicator() {
-        turnIndicator.textContent = `Au tour de ${players[currentPlayerIndex]}...`;
-    }
-
-    function getChallenge(type) {
-        let challengePool = [];
-        if (type === 'truth') {
-            challengePool = challengesData.truths[selectedLevel] || [];
-        } else { // dare
-            challengePool = challengesData.dares[selectedLevel] || [];
-        }
-
-        if (challengePool.length === 0) {
-            challengeText.textContent = `Aucun défi de ce type pour le niveau ${selectedLevel}.`;
-            return;
-        }
-
-        const randomIndex = Math.floor(Math.random() * challengePool.length);
-        displayChallenge(challengePool[randomIndex]);
-    }
-
-    function displayChallenge(text) {
-        challengeText.textContent = text;
-        challengeCard.classList.add('active');
-    }
-
-    function nextPlayer() {
-        currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
-        updateTurnIndicator();
-        challengeText.textContent = "Le prochain défi vous attend...";
-        challengeCard.classList.remove('active');
     }
     
-    // --- Modal Logic ---
-    function openModal() {
-        customChallengeModal.style.display = 'block';
-    }
-
-    function closeModal() {
-        customChallengeModal.style.display = 'none';
+    function toggleCustomChallengeForm() {
+        customChallengeForm.classList.toggle('active');
     }
 
     function saveCustomChallenge() {
-        const level = document.getElementById('custom-level-select').value;
-        const type = document.getElementById('custom-type-select').value;
-        const text = document.getElementById('custom-challenge-input').value.trim();
+        const level = document.getElementById('custom-challenge-level').value;
+        const type = document.getElementById('custom-challenge-type').value;
+        const text = document.getElementById('custom-challenge-text').value.trim();
 
         if (text) {
-            let customChallenges = JSON.parse(localStorage.getItem('customTchicheChallenges')) || { truths: {}, dares: {} };
-            if (!customChallenges[type]) customChallenges[type] = {};
-            if (!customChallenges[type][level]) customChallenges[type][level] = [];
-            
-            customChallenges[type][level].push(text);
-            localStorage.setItem('customTchicheChallenges', JSON.stringify(customChallenges));
-            
-            // Re-initialize challenges to include the new one
-            initializeChallenges();
-
-            document.getElementById('custom-challenge-input').value = '';
-            closeModal();
+            if (type === 'truth') {
+                gameState.customChallenges[level].truths.push(text);
+            } else {
+                gameState.customChallenges[level].dares.push(text);
+            }
+            localStorage.setItem('customTchicheChallenges', JSON.stringify(gameState.customChallenges));
+            document.getElementById('custom-challenge-text').value = '';
             alert('Défi ajouté !');
         } else {
             alert('Veuillez écrire un défi.');
         }
     }
 
+    // --- Fonctions de Jeu ---
 
-    // --- Event Listeners ---
-    levelButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            levelButtons.forEach(btn => btn.classList.remove('selected'));
-            button.classList.add('selected');
-            selectedLevel = button.dataset.level;
-            updateStartButtonState();
-        });
-    });
+    function startGame() {
+        const playerInputs = document.querySelectorAll('.player-name-input');
+        gameState.players = Array.from(playerInputs)
+            .map(input => input.value.trim())
+            .filter(name => name !== '');
 
-    playersList.addEventListener('input', updateStartButtonState);
+        if (gameState.players.length < 1) {
+            alert('Veuillez entrer au moins un nom de joueur·se.');
+            return;
+        }
+
+        startScreen.classList.remove('active');
+        gameScreen.classList.add('active');
+        gameState.currentPlayerIndex = 0;
+        updateTurnIndicator();
+        challengeText.textContent = "Préparez-vous...";
+    }
+
+    function updateTurnIndicator() {
+        turnIndicator.textContent = `Au tour de ${gameState.players[gameState.currentPlayerIndex]}`;
+    }
+
+    function getChallenge(type) {
+        const level = gameState.selectedLevel;
+        const allTruths = [...challenges.truths[level], ...gameState.customChallenges[level].truths];
+        const allDares = [...challenges.dares[level], ...gameState.customChallenges[level].dares];
+
+        let challengePool;
+        if (type === 'truth') {
+            challengePool = allTruths;
+        } else if (type === 'dare') {
+            challengePool = allDares;
+        } else { // random
+            challengePool = [...allTruths, ...allDares];
+        }
+
+        if (challengePool.length === 0) {
+            challengeText.textContent = "Aucun défi disponible pour cette catégorie. Ajoutez-en un !";
+            return;
+        }
+
+        const randomIndex = Math.floor(Math.random() * challengePool.length);
+        displayChallenge(challengePool[randomIndex]);
+    }
     
-    addPlayerBtn.addEventListener('click', addPlayer);
+    function displayChallenge(text) {
+        challengeText.parentElement.style.animation = 'none';
+        void challengeText.parentElement.offsetWidth;
+        challengeText.parentElement.style.animation = 'fadeIn 0.5s ease-in-out';
+        challengeText.textContent = text;
+    }
 
+    function nextPlayer() {
+        gameState.currentPlayerIndex = (gameState.currentPlayerIndex + 1) % gameState.players.length;
+        updateTurnIndicator();
+        challengeText.textContent = "Préparez-vous...";
+    }
+
+
+    // --- Ajout des écouteurs d'événements ---
+    levelButtons.forEach(btn => btn.addEventListener('click', selectLevel));
+    // CORRECTION : L'écouteur est maintenant bien attaché
+    addPlayerBtn.addEventListener('click', addPlayer);
+    toggleCustomChallengeBtn.addEventListener('click', toggleCustomChallengeForm);
+    saveCustomChallengeBtn.addEventListener('click', saveCustomChallenge);
     startGameBtn.addEventListener('click', startGame);
 
     truthBtn.addEventListener('click', () => getChallenge('truth'));
     dareBtn.addEventListener('click', () => getChallenge('dare'));
-    randomBtn.addEventListener('click', () => {
-        const randomType = Math.random() < 0.5 ? 'truth' : 'dare';
-        getChallenge(randomType);
-    });
+    randomBtn.addEventListener('click', () => getChallenge('random'));
     nextPlayerBtn.addEventListener('click', nextPlayer);
 
-    // Modal listeners
-    addCustomChallengesBtn.addEventListener('click', openModal);
-    closeModalBtn.addEventListener('click', closeModal);
-    saveCustomChallengeBtn.addEventListener('click', saveCustomChallenge);
-    window.addEventListener('click', (event) => {
-        if (event.target == customChallengeModal) {
-            closeModal();
-        }
-    });
-
-    // Initial setup
-    initializeChallenges();
-    document.querySelector('.player-name').addEventListener('input', updateStartButtonState); // For the first player
 });
 
