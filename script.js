@@ -1,5 +1,4 @@
- document.addEventListener('DOMContentLoaded', () => {
-    // --- State Variables ---
+ // --- State Variables ---
     let players = ['Joueur·se 1'];
     let selectedLevel = 1;
     let customChallenges = {
