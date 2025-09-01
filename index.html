@@ -8,20 +8,104 @@
 
   <!-- PWA (optionnel) -->
   <meta name="theme-color" content="#1b0b2a" />
-  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="manifest" href="manifest.json" />
 
-  <!-- ⚠️ Anti-cache PWA : incrémente v=3 à chaque déploiement -->
+  <!-- Anti-cache PWA : incrémente v=3 à chaque déploiement -->
   <link rel="stylesheet" href="styles.css?v=3" />
 </head>
 <body>
   <main id="app">
-    <!-- … (le reste de ta page, inchangé) … -->
+    <!-- ÉCRAN SETUP -->
+    <section id="setup-screen" class="screen active" role="region" aria-labelledby="setup-title">
+      <h1 id="setup-title">T'chiche ? 😈🔥</h1>
+
+      <!-- 1. CHOIX DU NIVEAU -->
+      <fieldset class="level-picker">
+        <legend>1. Choisissez le niveau</legend>
+        <div class="levels">
+          <button class="level-btn selected" data-level="1" type="button">Phase 1 - Préliminaires</button>
+          <button class="level-btn" data-level="2" type="button">Phase 2 - Plus en profondeur</button>
+          <button class="level-btn" data-level="3" type="button">Phase 3 - Hors de contrôle</button>
+          <button class="level-btn" data-level="4" type="button">Phase 4 - Transcendance</button>
+        </div>
+      </fieldset>
+
+      <!-- 2. JOUEUR·SE·S -->
+      <section class="players" aria-labelledby="players-title">
+        <h2 id="players-title">2. Ajoutez les joueur·se·s</h2>
+
+        <div id="player-list" class="player-list">
+          <!-- Les champs sont injectés par script.js -->
+        </div>
+
+        <div class="setup-actions">
+          <button id="add-player-btn" type="button">+ Ajouter un·e joueur·se</button>
+          <button id="add-custom-btn" type="button">Ajouter mes propres défis</button>
+        </div>
+      </section>
+
+      <!-- CTA LANCER -->
+      <div class="start">
+        <button id="start-game-btn" class="main-cta" type="button">T'chiche ?</button>
+      </div>
+    </section>
+
+    <!-- ÉCRAN JEU -->
+    <section id="game-screen" class="screen" role="region" aria-labelledby="game-title" style="display:none">
+      <h2 id="turn-indicator" aria-live="polite">Au tour de …</h2>
+
+      <div id="card-content" class="card">
+        <p id="challenge-text" aria-live="polite">Préparez-vous...</p>
+        <span id="author-tag" style="display:none;"></span>
+      </div>
+
+      <div class="game-buttons">
+        <button id="truth-btn" class="choice-btn" type="button">Vérité</button>
+        <button id="dare-btn" class="choice-btn" type="button">Action</button>
+        <button id="random-btn" class="choice-btn" type="button">Défi Aléatoire</button>
+        <button id="next-player-btn" class="main-cta" type="button">Joueur·se Suivant·e</button>
+      </div>
+    </section>
+
+    <!-- MODALE : AJOUT DÉFI PERSO -->
+    <div id="custom-challenge-modal" class="modal" role="dialog" aria-modal="true"
+         aria-labelledby="custom-title" style="display:none;">
+      <div class="modal-content">
+        <h3 id="custom-title">Ajouter un défi</h3>
+
+        <label for="custom-challenge-text">Texte du défi</label>
+        <textarea id="custom-challenge-text" rows="4" placeholder="Écris ici ton défi…"></textarea>
+
+        <div class="modal-row">
+          <label for="custom-type-select">Type</label>
+          <select id="custom-type-select">
+            <option value="truths">Vérité</option>
+            <option value="dares">Action</option>
+          </select>
+        </div>
+
+        <div class="modal-row">
+          <label for="custom-level-select">Niveau</label>
+          <select id="custom-level-select">
+            <option value="1">Phase 1</option>
+            <option value="2">Phase 2</option>
+            <option value="3">Phase 3</option>
+            <option value="4">Phase 4</option>
+          </select>
+        </div>
+
+        <div class="modal-actions">
+          <button id="save-challenge-btn" class="main-cta" type="button">Ajouter</button>
+          <button id="close-modal-btn" type="button">Fermer</button>
+        </div>
+      </div>
+    </div>
+
+    <noscript>Active JavaScript pour jouer 🙃</noscript>
   </main>
 
-  <!-- IMPORTANT : data.js AVANT script.js -->
-  <script src="data.js" defer></script>
-  <script src="script.js" defer></script>
+  <!-- IMPORTANT : data.js AVANT script.js (tu peux aussi ajouter ?v=3) -->
+  <script src="data.js?v=3" defer></script>
+  <script src="script.js?v=3" defer></script>
 </body>
 </html>
-
-
