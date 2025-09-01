@@ -88,10 +88,10 @@
     function startGame() {
         if (!setupScreen || !gameScreen) return; // Safety check for screens
 
-        // Filter out empty player names
-        players = players.filter(p => p.trim() !== '' && p.trim() !== `Joueur·se ${players.indexOf(p) + 1}`);
+        // Filter out only empty player names
+        players = players.filter(p => p.trim() !== '');
         if (players.length < 1) {
-            alert("Veuillez entrer au moins un nom de joueur valide.");
+            alert("Veuillez entrer au moins un nom de joueur.");
             players = ['Joueur·se 1']; // Reset to one player to avoid errors
             updatePlayerList();
             return;
