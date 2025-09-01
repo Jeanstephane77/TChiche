@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -6,11 +5,298 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>T'chiche v2.0</title>
     <meta name="theme-color" content="#ff69b4"/>
-    <link rel="stylesheet" href="styles.css">
     <link rel="manifest" href="manifest.json">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0d021f;
+            --primary-color: #ff69b4;
+            --text-color: #ffffff;
+            --card-bg-color: rgba(255, 255, 255, 0.05);
+            --border-color: rgba(255, 105, 180, 0.5);
+            --font-ui: 'Montserrat', sans-serif;
+            --font-title: 'Caveat', cursive;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-ui);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .screen {
+            display: none;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        .container {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            text-align: center;
+        }
+
+        .main-title {
+            font-family: var(--font-title);
+            font-size: 4rem;
+            color: var(--primary-color);
+            text-shadow: 0 0 10px var(--primary-color), 0 0 20px var(--primary-color);
+            margin-bottom: 20px;
+        }
+
+        .setup-section {
+            background: var(--card-bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            padding: 20px;
+            width: 100%;
+        }
+
+        .setup-section h2 {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+            text-transform: uppercase;
+        }
+
+        .button-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        button {
+            font-family: var(--font-ui);
+            font-size: 1rem;
+            padding: 15px;
+            border-radius: 50px;
+            border: 2px solid var(--primary-color);
+            background-color: transparent;
+            color: var(--primary-color);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        button:hover {
+            background-color: var(--primary-color);
+            color: var(--bg-color);
+            box-shadow: 0 0 15px var(--primary-color);
+        }
+
+        button.selected {
+            background-color: var(--primary-color);
+            color: var(--bg-color);
+            box-shadow: 0 0 15px var(--primary-color);
+        }
+
+        .main-cta {
+            background-color: var(--primary-color);
+            color: var(--bg-color);
+            padding: 20px;
+            font-size: 1.5rem;
+            width: 100%;
+        }
+
+        #player-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        #player-list input {
+            width: 100%;
+            padding: 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: rgba(0, 0, 0, 0.2);
+            color: var(--text-color);
+            font-size: 1rem;
+            text-align: center;
+        }
+
+        .player-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .player-actions button {
+            flex: 1;
+        }
+
+        /* --- Game Screen --- */
+        #game-screen .container {
+            min-height: 80vh;
+            justify-content: space-between;
+        }
+
+        #turn-indicator {
+            font-size: 2rem;
+            color: var(--primary-color);
+        }
+
+        #card-content {
+            background: var(--card-bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 30px;
+            width: 100%;
+            transition: opacity 0.3s ease;
+        }
+
+        #challenge-text {
+            font-family: var(--font-title);
+            font-size: 2.5rem;
+            line-height: 1.4;
+        }
+
+        #author-tag {
+            margin-top: 15px;
+            font-size: 0.8rem;
+            color: var(--primary-color);
+            opacity: 0.7;
+        }
+
+        .game-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            width: 100%;
+        }
+        
+        .game-buttons .choice-btn {
+             grid-column: span 2;
+        }
+
+        .game-buttons .main-cta {
+            grid-column: 1 / -1; /* Prend toute la largeur */
+        }
+        
+        @media (min-width: 500px) {
+            .game-buttons {
+                grid-template-columns: 1fr 1fr 1fr;
+            }
+            .game-buttons .choice-btn {
+                grid-column: span 1;
+            }
+        }
+
+
+        /* --- Modal --- */
+        .modal {
+            display: none; 
+            position: fixed; 
+            z-index: 1000; 
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto; 
+            background-color: rgba(0,0,0,0.8);
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background-color: var(--bg-color);
+            padding: 30px;
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            position: relative;
+        }
+
+        .close-btn {
+            color: #aaa;
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .modal-content h2 {
+            color: var(--primary-color);
+        }
+
+        .modal-content textarea {
+            width: 100%;
+            height: 150px;
+            padding: 15px;
+            background-color: var(--card-bg-color);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            font-family: var(--font-ui);
+            border-radius: 8px;
+            font-size: 1rem;
+            resize: vertical;
+        }
+
+        .modal-options {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .modal-options select {
+            width: 100%;
+            padding: 15px;
+            background-color: var(--card-bg-color);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 420px) {
+            .main-title {
+                font-size: 3rem;
+            }
+
+            #challenge-text {
+                font-size: 2rem;
+            }
+
+            .button-grid, .player-actions {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
 
@@ -96,3 +382,4 @@
     </script>
 </body>
 </html>
+
