@@ -86,6 +86,8 @@
     }
 
     function startGame() {
+        if (!setupScreen || !gameScreen) return; // Safety check for screens
+
         // Filter out empty player names
         players = players.filter(p => p.trim() !== '' && p.trim() !== `Joueur·se ${players.indexOf(p) + 1}`);
         if (players.length < 1) {
@@ -100,6 +102,7 @@
     }
     
     function updateTurnIndicator() {
+        if (!turnIndicator) return; // Safety check
         turnIndicator.textContent = `Au tour de ${players[currentPlayerIndex]}`;
     }
 
@@ -107,8 +110,8 @@
         currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
         updateTurnIndicator();
         // Reset challenge card
-        challengeText.textContent = 'Préparez-vous...';
-        authorTag.style.display = 'none';
+        if (challengeText) challengeText.textContent = 'Préparez-vous...';
+        if (authorTag) authorTag.style.display = 'none';
     }
 
     function getChallenge(type) {
