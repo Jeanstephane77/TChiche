@@ -1,4 +1,4 @@
- document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', () => {
     // --- State Variables ---
     let players = ['Joueur·se 1'];
     let selectedLevel = 1;
@@ -187,4 +187,5 @@
     selectLevel(1);
     updatePlayerList();
 });
+
 
