@@ -97,21 +97,20 @@ document.addEventListener('DOMContentLoaded', () => {
             customChallengeText.value = '';
             customChallengeModal.style.display = 'none';
         } else {
-            alert('Veuillez remplir tous les champs.');
+            showNotification('Veuillez remplir tous les champs.');
         }
     }
 
     function startGame() {
-        const validPlayers = players.filter(p => p.name.trim() !== '');
-
-        if (validPlayers.length < 1) {
+        // We filter player names directly on start
+        const namedPlayers = players.map(p => p.name.trim()).filter(name => name !== '');
+        if (namedPlayers.length < 1) {
             showNotification("Veuillez entrer au moins un nom de joueur.");
             return;
         }
         
-        players = validPlayers;
-        // Reset passes for all players at the start of a new game
-        players.forEach(p => p.passes = 0);
+        // Recreate the players array with only valid players and reset their passes
+        players = namedPlayers.map(name => ({ name: name, passes: 0 }));
         
         setupScreen.classList.remove('active');
         gameScreen.classList.add('active');
@@ -138,12 +137,15 @@ document.addEventListener('DOMContentLoaded', () => {
     function showNotification(message, isGageWarning = false) {
         notificationText.textContent = message;
         notificationModal.style.display = 'flex';
-        // We link the "OK" button's action based on the type of notification
+        
+        // We define what the "OK" button does when clicked
         closeNotificationModalBtn.onclick = () => {
             notificationModal.style.display = 'none';
+            // If it was a gage warning, we switch to the next player
             if (isGageWarning) {
-                switchTurn(); // Only switch turn after the warning
+                switchTurn();
             }
+            // Otherwise, we do nothing (it was a simple info message)
         };
     }
 
@@ -152,9 +154,10 @@ document.addEventListener('DOMContentLoaded', () => {
         currentPlayer.passes += 1;
 
         if (currentPlayer.passes >= 2) {
-            triggerGage();
             currentPlayer.passes = 0; // Reset after getting the gage
+            triggerGage();
         } else {
+            // This is the first refusal, show a warning
             showNotification(`C'est ton premier refus. Au prochain, c'est le gage !`, true);
         }
     }
@@ -229,14 +232,16 @@ document.addEventListener('DOMContentLoaded', () => {
     saveChallengeBtn.addEventListener('click', saveCustomChallenge);
     closeGageModalBtn.addEventListener('click', closeGageModal);
     
-    // Generic listener for the notification modal, action is set dynamically
+    // The main listener for the notification modal "OK" button. 
+    // Its specific action is now set inside the showNotification function.
     closeNotificationModalBtn.addEventListener('click', () => {
         notificationModal.style.display = 'none';
     });
 
 
     // --- Initial state ---
-    addPlayer(); 
+    players.push({ name: '', passes: 0 }); // Start with one player field
+    updatePlayerList();
     selectLevel(1);
 });
 
