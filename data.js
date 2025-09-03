@@ -74,6 +74,25 @@ const challenges = {
             { text: "T'chiche de me faire une mise en scène sexy comme si on était dans un film." },
             { text: "T'chiche de me prendre par la taille et de simuler une danse très sensuelle." }
           ]
+    },
+    forfeits: {
+        1: [
+            { text: "Le Gage Théâtral : Fais une déclaration d'amour passionnée à l'objet le plus improbable de la pièce (plante, coussin...). Sois très convaincant(e) !" },
+            { text: "Le Gage Social : Donne ton téléphone au groupe. Les autres ont 1 minute pour écrire une story absurde (3-4 mots max). Elle doit rester en ligne 15 minutes." }
+        ],
+        2: [
+            { text: "L’Esclave de la Tentation : Tu deviens le/la serviteur·se du joueur de ton choix pendant 3 tours. Chaque fois qu’il/elle te regarde, tu dois dire : 'Je suis à toi'." },
+            { text: "La Roulette Coquine : Laisse les autres joueurs choisir au hasard un défi de n'importe quel niveau pour toi." }
+        ],
+        3: [
+            { text: "Message Dating : Prends ton téléphone. Les autres choisissent une lettre. Envoie à voix haute un SMS proposant un date au premier contact commençant par cette lettre." },
+            { text: "Strip + Fantasme : Enlève un vêtement ou un accessoire lentement, tout en décrivant un fantasme que tu n’as encore jamais osé réaliser." }
+        ],
+        4: [
+            { text: "Murmure Interdit : Approche-toi d’un joueur et murmure dans son oreille la phrase la plus cochonne que tu connaisses, de plus en plus lentement." },
+            { text: "Le Baiser Interdit : Embrasse le joueur de ton choix où tu veux... sauf sur la bouche. Tu dois le faire les yeux fermés." },
+            { text: "L’Explorateur Silencieux : Ferme les yeux. Laisse un joueur te toucher pendant 10 secondes sans parler. Tu dois deviner avec quelle partie de son corps il ou elle t’a effleuré." }
+        ]
     }
 };
 
