@@ -1,186 +1,220 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // --- State Variables ---
-    let players = ['Joueur·se 1'];
-    let selectedLevel = 1;
-    let customChallenges = {
-        truths: { 1: [], 2: [], 3: [], 4: [] },
-        dares: { 1: [], 2: [], 3: [], 4: [] }
-    };
-    let currentPlayerIndex = 0;
-
-    // --- DOM Elements (Setup Screen) ---
-    const setupScreen = document.getElementById('setup-screen');
-    const levelButtons = document.querySelectorAll('.level-btn');
-    const playerList = document.getElementById('player-list');
+    // --- Éléments du DOM ---
+    const startScreen = document.getElementById('start-screen');
+    const gameScreen = document.getElementById('game-screen');
+    const levelSelection = document.getElementById('level-selection');
     const addPlayerBtn = document.getElementById('add-player-btn');
+    const playerList = document.getElementById('player-list');
     const startGameBtn = document.getElementById('start-game-btn');
-    const addCustomBtn = document.getElementById('add-custom-btn');
-    const customChallengeModal = document.getElementById('custom-challenge-modal');
-    const closeModalBtn = document.getElementById('close-modal-btn');
-    const saveChallengeBtn = document.getElementById('save-challenge-btn');
-    const customChallengeText = document.getElementById('custom-challenge-text');
-    const customLevelSelect = document.getElementById('custom-level-select');
-    const customTypeSelect = document.getElementById('custom-type-select');
-
-    // --- DOM Elements (Game Screen - declared but not assigned) ---
-    let gameScreen, turnIndicator, challengeText, cardContent, authorTag;
-    let truthBtn, dareBtn, randomBtn, nextPlayerBtn;
-
-    // This function initializes game screen elements and their listeners only when the game starts.
-    function initializeGameScreen() {
-        gameScreen = document.getElementById('game-screen');
-        turnIndicator = document.getElementById('turn-indicator');
-        challengeText = document.getElementById('challenge-text');
-        cardContent = document.getElementById('card-content');
-        authorTag = document.getElementById('author-tag');
-        truthBtn = document.getElementById('truth-btn');
-        dareBtn = document.getElementById('dare-btn');
-        randomBtn = document.getElementById('random-btn');
-        nextPlayerBtn = document.getElementById('next-player-btn');
-
-        // Attach listeners for game screen buttons
-        if (truthBtn) truthBtn.addEventListener('click', () => getChallenge('truth'));
-        if (dareBtn) dareBtn.addEventListener('click', () => getChallenge('dare'));
-        if (randomBtn) randomBtn.addEventListener('click', () => getChallenge('random'));
-        if (nextPlayerBtn) nextPlayerBtn.addEventListener('click', switchTurn);
-    }
-
-
-    // --- Functions ---
-
-    function updatePlayerList() {
-        if (!playerList) return;
-        playerList.innerHTML = '';
-        players.forEach((player, index) => {
-            const playerInput = document.createElement('input');
-            playerInput.type = 'text';
-            playerInput.value = player;
-            playerInput.placeholder = `Prénom Joueur·se ${index + 1}`;
-            playerInput.addEventListener('input', (e) => {
-                players[index] = e.target.value;
-            });
-            playerList.appendChild(playerInput);
-        });
-    }
-
-    function addPlayer() {
-        if (players.length < 10) {
-            players.push(`Joueur·se ${players.length + 1}`);
-            updatePlayerList();
-        }
-    }
-
-    function selectLevel(level) {
-        selectedLevel = level;
-        levelButtons.forEach(button => {
-            button.classList.remove('selected');
-            if (button.dataset.level == level) {
-                button.classList.add('selected');
-            }
-        });
-    }
+    const turnIndicator = document.getElementById('turn-indicator');
+    const challengeText = document.getElementById('challenge-text');
+    const truthBtn = document.getElementById('truth-btn');
+    const dareBtn = document.getElementById('dare-btn');
+    const randomBtn = document.getElementById('random-btn');
+    const nextPlayerBtn = document.getElementById('next-player-btn');
     
-    function saveCustomChallenge() {
-        const customText = customChallengeText.value.trim();
-        const level = customLevelSelect.value;
-        const type = customTypeSelect.value;
+    // Nouveaux éléments pour les gages
+    const passBtn = document.getElementById('pass-btn');
+    const forfeitModal = document.getElementById('forfeit-modal');
+    const forfeitPlayerName = document.getElementById('forfeit-player-name');
+    const forfeitText = document.getElementById('forfeit-text');
+    const closeForfeitModalBtn = document.getElementById('close-forfeit-modal-btn');
+    
+    // Éléments pour défis personnalisés
+    const openCustomModalBtn = document.getElementById('open-custom-challenge-modal-btn');
+    const customModal = document.getElementById('custom-challenge-modal');
+    const closeCustomModalBtn = document.getElementById('close-custom-challenge-modal-btn');
+    const saveCustomChallengeBtn = document.getElementById('save-custom-challenge-btn');
 
-        if (customText && level && type) {
-            customChallenges[type][level].push({ text: customText, author: 'vous' });
-            customChallengeText.value = '';
-            customChallengeModal.style.display = 'none';
-            alert('Défi ajouté !');
-        } else {
-            alert('Veuillez remplir tous les champs.');
+    // --- État du jeu ---
+    const gameState = {
+        level: 1,
+        players: [],
+        currentPlayerIndex: 0,
+    };
+
+    // --- Initialisation ---
+
+    // Sélection du niveau
+    levelSelection.addEventListener('click', (e) => {
+        if (e.target.classList.contains('choice-btn')) {
+            // Désélectionner tous les boutons
+            document.querySelectorAll('#level-selection .choice-btn').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            // Sélectionner le bouton cliqué
+            e.target.classList.add('selected');
+            gameState.level = parseInt(e.target.dataset.level, 10);
         }
-    }
+    });
 
-    function startGame() {
-        const validPlayers = players.map(p => p.trim()).filter(p => p !== "");
+    // Ajouter un joueur
+    addPlayerBtn.addEventListener('click', () => {
+        if (playerList.children.length < 10) {
+            const playerNum = playerList.children.length + 1;
+            const newPlayerInput = `
+                <div class="player-input-group">
+                    <input type="text" placeholder="Prénom Joueur·se ${playerNum}" class="player-name-input">
+                    <button class="remove-player-btn">×</button>
+                </div>`;
+            playerList.insertAdjacentHTML('beforeend', newPlayerInput);
+        }
+    });
 
-        if (validPlayers.length < 1) {
-            alert("Veuillez entrer au moins un nom de joueur.");
+    // Supprimer un joueur
+    playerList.addEventListener('click', (e) => {
+        if (e.target.classList.contains('remove-player-btn')) {
+            if (playerList.children.length > 1) {
+                e.target.parentElement.remove();
+            }
+        }
+    });
+
+    // Démarrer le jeu
+    startGameBtn.addEventListener('click', () => {
+        const playerInputs = document.querySelectorAll('.player-name-input');
+        const playerNames = Array.from(playerInputs)
+            .map(input => input.value.trim())
+            .filter(name => name !== '');
+
+        if (playerNames.length === 0) {
+            alert('Veuillez entrer au moins un nom de joueur.');
             return;
         }
+
+        gameState.players = playerNames.map(name => ({ name, refuseCount: 0 }));
+        gameState.currentPlayerIndex = 0;
+
+        startScreen.classList.remove('active');
+        gameScreen.classList.add('active');
+        setupTurn();
+    });
+
+    // --- Logique de jeu ---
+
+    function setupTurn() {
+        challengeText.textContent = 'Préparez-vous...';
+        turnIndicator.textContent = `Au tour de ${gameState.players[gameState.currentPlayerIndex].name}`;
         
-        players = validPlayers;
-
-        // Initialize game screen elements now that we need them
-        initializeGameScreen();
-
-        if (!setupScreen || !gameScreen) return;
+        // Afficher les boutons de choix de défi
+        truthBtn.classList.remove('hidden');
+        dareBtn.classList.remove('hidden');
+        randomBtn.classList.remove('hidden');
         
-        setupScreen.style.display = 'none';
-        gameScreen.style.display = 'flex';
-        updateTurnIndicator();
-    }
-    
-    function updateTurnIndicator() {
-        if (!turnIndicator) return;
-        turnIndicator.textContent = `Au tour de ${players[currentPlayerIndex]}`;
-    }
-
-    function switchTurn() {
-        currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
-        updateTurnIndicator();
-        if (challengeText) challengeText.textContent = 'Préparez-vous...';
-        if (authorTag) authorTag.style.display = 'none';
+        // Cacher les boutons d'action post-défi
+        nextPlayerBtn.classList.add('hidden');
+        passBtn.classList.add('hidden');
     }
 
     function getChallenge(type) {
-        const availableTruths = [...challenges.truths[selectedLevel], ...(customChallenges.truths[selectedLevel] || [])];
-        const availableDares = [...challenges.dares[selectedLevel], ...(customChallenges.dares[selectedLevel] || [])];
+        let challengePool;
+        const levelChallenges = challenges[type][gameState.level] || [];
+        const customChallenges = JSON.parse(localStorage.getItem('customChallenges')) || { truths: {}, dares: {} };
+        const customLevelChallenges = (customChallenges[type] && customChallenges[type][gameState.level]) ? customChallenges[type][gameState.level] : [];
+        
+        challengePool = [...levelChallenges, ...customLevelChallenges];
 
-        let pool = [];
-        if (type === 'truth') pool = availableTruths;
-        else if (type === 'dare') pool = availableDares;
-        else if (type === 'random') pool = [...availableTruths, ...availableDares];
-
-        if (pool.length === 0) {
-            displayChallenge(`Plus de défis disponibles dans cette catégorie ! Ajoutez les vôtres ou changez de niveau.`);
+        if (challengePool.length === 0) {
+            challengeText.textContent = `Aucun défi de type "${type}" trouvé pour ce niveau.`;
             return;
         }
 
-        const randomIndex = Math.floor(Math.random() * pool.length);
-        const challenge = pool[randomIndex];
-        displayChallenge(challenge.text, challenge.author);
+        const randomIndex = Math.floor(Math.random() * challengePool.length);
+        displayChallenge(challengePool[randomIndex].text);
+    }
+    
+    function getRandomChallenge() {
+        const type = Math.random() < 0.5 ? 'truths' : 'dares';
+        getChallenge(type);
+    }
+    
+    function displayChallenge(text) {
+        challengeText.textContent = text;
+        
+        // Cacher les boutons de choix de défi
+        truthBtn.classList.add('hidden');
+        dareBtn.classList.add('hidden');
+        randomBtn.classList.add('hidden');
+        
+        // Afficher les boutons d'action post-défi
+        nextPlayerBtn.classList.remove('hidden');
+        passBtn.classList.remove('hidden');
+    }
+    
+    function switchTurn() {
+        gameState.currentPlayerIndex = (gameState.currentPlayerIndex + 1) % gameState.players.length;
+        setupTurn();
+    }
+    
+    function handlePass() {
+        const currentPlayer = gameState.players[gameState.currentPlayerIndex];
+        currentPlayer.refuseCount++;
+        
+        if (currentPlayer.refuseCount >= 2) {
+            currentPlayer.refuseCount = 0; // Reset count
+            displayForfeit();
+        } else {
+            // On peut ajouter une petite alerte ou un message visuel ici si on veut
+            alert(`${currentPlayer.name} passe son tour. Attention, au prochain refus, c'est le gage !`);
+            switchTurn();
+        }
+    }
+    
+    function displayForfeit() {
+        const forfeitPool = challenges.forfeits[gameState.level] || [];
+        if(forfeitPool.length === 0) {
+            alert("Pas de gage pour ce niveau, tu as de la chance !");
+            switchTurn();
+            return;
+        }
+        
+        const randomIndex = Math.floor(Math.random() * forfeitPool.length);
+        const forfeit = forfeitPool[randomIndex].text;
+        
+        forfeitPlayerName.textContent = `Gage pour ${gameState.players[gameState.currentPlayerIndex].name} !`;
+        forfeitText.textContent = forfeit;
+        forfeitModal.classList.add('active');
+    }
+    
+    function closeForfeitModal() {
+        forfeitModal.classList.remove('active');
+        switchTurn();
     }
 
-    function displayChallenge(text, author = null) {
-        if (!challengeText || !cardContent || !authorTag) return;
-        challengeText.innerHTML = '';
-        cardContent.style.opacity = 0;
 
-        setTimeout(() => {
-            challengeText.textContent = text;
-            if (author) {
-                authorTag.textContent = `Proposé par ${author}`;
-                authorTag.style.display = 'block';
-            } else {
-                authorTag.style.display = 'none';
-            }
-            cardContent.style.opacity = 1;
-        }, 300);
-    }
+    // --- Écouteurs d'événements ---
+    truthBtn.addEventListener('click', () => getChallenge('truths'));
+    dareBtn.addEventListener('click', () => getChallenge('dares'));
+    randomBtn.addEventListener('click', getRandomChallenge);
+    nextPlayerBtn.addEventListener('click', switchTurn);
+    passBtn.addEventListener('click', handlePass);
+    closeForfeitModalBtn.addEventListener('click', closeForfeitModal);
 
-    // --- Event Listeners (Setup Screen) ---
-    levelButtons.forEach(button => {
-        button.addEventListener('click', () => selectLevel(button.dataset.level));
+    // --- Logique des défis personnalisés ---
+    openCustomModalBtn.addEventListener('click', () => customModal.classList.add('active'));
+    closeCustomModalBtn.addEventListener('click', () => customModal.classList.remove('active'));
+    saveCustomChallengeBtn.addEventListener('click', () => {
+        const level = document.getElementById('custom-challenge-level').value;
+        const type = document.getElementById('custom-challenge-type').value;
+        const text = document.getElementById('custom-challenge-text').value.trim();
+
+        if (text) {
+            const customChallenges = JSON.parse(localStorage.getItem('customChallenges')) || { truths: {}, dares: {} };
+            if (!customChallenges[type]) customChallenges[type] = {};
+            if (!customChallenges[type][level]) customChallenges[type][level] = [];
+            
+            customChallenges[type][level].push({ text });
+            localStorage.setItem('customChallenges', JSON.stringify(customChallenges));
+            
+            document.getElementById('custom-challenge-text').value = '';
+            customModal.classList.remove('active');
+            alert('Défi ajouté avec succès !');
+        } else {
+            alert('Veuillez écrire un défi.');
+        }
     });
 
-    if (addPlayerBtn) addPlayerBtn.addEventListener('click', addPlayer);
-    if (startGameBtn) startGameBtn.addEventListener('click', startGame);
-
-    // Custom Challenge Modal
-    if (addCustomBtn) addCustomBtn.addEventListener('click', () => {
-        if (customChallengeModal) customChallengeModal.style.display = 'flex';
-    });
-    if (closeModalBtn) closeModalBtn.addEventListener('click', () => {
-        if (customChallengeModal) customChallengeModal.style.display = 'none';
-    });
-    if (saveChallengeBtn) saveChallengeBtn.addEventListener('click', saveCustomChallenge);
-
-    // --- Initial state ---
-    selectLevel(1);
-    updatePlayerList();
+    // Initialiser le premier niveau comme sélectionné
+    document.querySelector('#level-selection .choice-btn[data-level="1"]').classList.add('selected');
 });
+
