@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
@@ -249,6 +249,11 @@
             max-width: 400px;
             text-align: center;
         }
+        
+        .modal-content p {
+            font-size: 1.2rem;
+            line-height: 1.6;
+        }
 
         .modal-content h3 {
             color: var(--primary-color);
@@ -277,7 +282,7 @@
     <div class="container">
         
         <!-- Écran de Configuration -->
-        <div id="setup-screen" class="screen active" style="display: flex;">
+        <div id="setup-screen" class="screen active">
             <h1 class="main-title">T'chiche ? 😈🔥</h1>
             
             <div class="setup-section">
@@ -317,7 +322,8 @@
                 <button id="truth-btn" class="choice-btn">Vérité</button>
                 <button id="dare-btn" class="choice-btn">Action</button>
                 <button id="random-btn" class="choice-btn">Défi Aléatoire</button>
-                <button id="next-player-btn" class="choice-btn">Joueur·se Suivant·e</button>
+                <button id="pass-btn" class="choice-btn">Je passe...</button>
+                <button id="next-player-btn" class="choice-btn" style="width:100%; margin-top: 10px;">Joueur·se Suivant·e</button>
             </div>
         </div>
     </div>
@@ -339,6 +345,15 @@
             <textarea id="custom-challenge-text" placeholder="Écrivez votre défi ici..."></textarea>
             <button id="save-challenge-btn" class="action-btn">Sauvegarder le défi</button>
             <button id="close-modal-btn" class="action-btn" style="margin-top:10px;">Fermer</button>
+        </div>
+    </div>
+
+    <!-- Modal pour les Gages -->
+    <div id="gage-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h3>😈 GAGE ! 😈</h3>
+            <p id="gage-text"></p>
+            <button id="close-gage-modal-btn" class="action-btn" style="margin-top:20px;">J'ai compris, au suivant...</button>
         </div>
     </div>
 
