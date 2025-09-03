@@ -1,4 +1,4 @@
-!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
@@ -281,7 +281,7 @@
 
     <div class="container">
         
-        <!-- Écran de Configuration -->
+        <!-- Setup Screen -->
         <div id="setup-screen" class="screen active">
             <h1 class="main-title">T'chiche ? 😈🔥</h1>
             
@@ -298,7 +298,7 @@
             <div class="setup-section">
                 <h2>2. Ajoutez les joueur·se·s</h2>
                 <div id="player-list">
-                    <!-- Les inputs des joueurs seront ajoutés ici par JS -->
+                    <!-- Player inputs will be added here by JS -->
                 </div>
                 <button id="add-player-btn" class="action-btn">+ Ajouter un·e joueur·se</button>
                 <button id="add-custom-btn" class="action-btn">Ajouter mes propres défis</button>
@@ -307,7 +307,7 @@
             <button id="start-game-btn">T'chiche ?</button>
         </div>
 
-        <!-- Écran de Jeu -->
+        <!-- Game Screen -->
         <div id="game-screen" class="screen">
             <div class="game-header">
                 <h2 id="turn-indicator"></h2>
@@ -328,7 +328,7 @@
         </div>
     </div>
 
-    <!-- Modal pour ajouter un défi perso -->
+    <!-- Modal for custom challenges -->
     <div id="custom-challenge-modal" class="modal-overlay">
         <div class="modal-content">
             <h3>Ajouter un défi personnalisé</h3>
@@ -348,7 +348,7 @@
         </div>
     </div>
 
-    <!-- Modal pour les Gages -->
+    <!-- Modal for Gages -->
     <div id="gage-modal" class="modal-overlay">
         <div class="modal-content">
             <h3>😈 GAGE ! 😈</h3>
@@ -357,9 +357,18 @@
         </div>
     </div>
 
+    <!-- Modal for Notifications -->
+    <div id="notification-modal" class="modal-overlay">
+        <div class="modal-content">
+            <p id="notification-text"></p>
+            <button id="close-notification-modal-btn" class="action-btn" style="margin-top:20px;">OK</button>
+        </div>
+    </div>
+
     <script src="data.js"></script>
     <script src="script.js"></script>
 
 </body>
 </html>
+
 
