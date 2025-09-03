@@ -46,8 +46,8 @@ const challenges = {
             { text: "T'chiche de me faire un compliment physique." },
             { text: "T'chiche de me raconter un souvenir tendre que tu gardes pour toi." },
             { text: "T'chiche de me caresser doucement la main ou le bras pendant 10 secondes." }
-          ],
-          2: [
+        ],
+        2: [
             { text: "T'chiche de me faire un massage sensuel d’une minute sur une zone de mon choix." },
             { text: "T'chiche de me demander où je rêve d’être touché·e maintenant, et de l’effleurer." },
             { text: "T'chiche de dessiner un mot secret sur mon dos avec ton doigt." },
@@ -55,8 +55,8 @@ const challenges = {
             { text: "T'chiche de me raconter ton rêve érotique le plus marquant." },
             { text: "T'chiche de me chuchoter un secret excitant que personne ne connaît." },
             { text: "T'chiche de me caresser les cheveux ou le visage lentement, comme dans un film." }
-          ],
-          3: [
+        ],
+        3: [
             { text: "T'chiche de me proposer un scénario de jeu de rôle que tu aimerais tester." },
             { text: "T'chiche d’enlever un vêtement de ton choix." },
             { text: "T'chiche de simuler un baiser à 1 cm de mes lèvres." },
@@ -64,8 +64,8 @@ const challenges = {
             { text: "T'chiche de me chuchoter ce que tu veux que je fasse… sans le dire explicitement." },
             { text: "T'chiche de me guider pour toucher une zone précise de ton corps." },
             { text: "T'chiche de me faire deviner une scène coquine que tu aimerais vivre, version mime." }
-          ],
-          4: [
+        ],
+        4: [
             { text: "T'chiche de me faire une dégustation de 3 endroits de mon corps et décrire leur goût." },
             { text: "T'chiche d’écrire un mot coquin avec ton doigt que je dois effacer avec ma bouche." },
             { text: "T'chiche de faire un strip-tease avec un accessoire." },
@@ -73,25 +73,25 @@ const challenges = {
             { text: "T'chiche de me bander les yeux et de me faire deviner 3 caresses." },
             { text: "T'chiche de me faire une mise en scène sexy comme si on était dans un film." },
             { text: "T'chiche de me prendre par la taille et de simuler une danse très sensuelle." }
-          ]
+        ]
     },
-    forfeits: {
+    gages: {
         1: [
-            { text: "Le Gage Théâtral : Fais une déclaration d'amour passionnée à l'objet le plus improbable de la pièce (plante, coussin...). Sois très convaincant(e) !" },
-            { text: "Le Gage Social : Donne ton téléphone au groupe. Les autres ont 1 minute pour écrire une story absurde (3-4 mots max). Elle doit rester en ligne 15 minutes." }
+            { text: "Le Gage Théâtral : \"La Déclaration Absurde\"\nLe joueur doit faire une déclaration d'amour passionnée et enflammée à l'objet le plus improbable de la pièce (une plante verte, une lampe, un coussin...). Il/elle doit être très convaincant(e), comme dans une grande scène de film romantique." },
+            { text: "Le Gage Social : \"Le Community Manager d'un Soir\"\nLe joueur doit donner son téléphone au groupe. Les autres joueurs ont 1 minute pour écrire un statut ou une story courte (3-4 mots max, sans insulte) et complètement absurde sur le réseau social de leur choix (Instagram, Facebook, etc.). Le statut doit rester en ligne pendant au moins 15 minutes." }
         ],
         2: [
-            { text: "L’Esclave de la Tentation : Tu deviens le/la serviteur·se du joueur de ton choix pendant 3 tours. Chaque fois qu’il/elle te regarde, tu dois dire : 'Je suis à toi'." },
-            { text: "La Roulette Coquine : Laisse les autres joueurs choisir au hasard un défi de n'importe quel niveau pour toi." }
+            { text: "😈 Gage : L’Esclave de la Tentation\n🧎‍♂️ Tu deviens le ou la \"serviteur·se personnel·le\" du joueur de ton choix pendant 3 tours. Chaque fois qu’il ou elle te regarde, tu dois dire : Je suis à toi." },
+            { text: "🎲 Gage : La Roulette Coquine\n🎰 Les autres joueurs choisissent au hasard un défi pour toi dans la liste." }
         ],
         3: [
-            { text: "Message Dating : Prends ton téléphone. Les autres choisissent une lettre. Envoie à voix haute un SMS proposant un date au premier contact commençant par cette lettre." },
-            { text: "Strip + Fantasme : Enlève un vêtement ou un accessoire lentement, tout en décrivant un fantasme que tu n’as encore jamais osé réaliser." }
+            { text: "Gage : Message Dating\n📱 Prends ton téléphone, les autres choisissent une lettre au hasard. Tu dois envoyer un SMS de proposition de date au premier contact de ton téléphone commençant par cette lettre, à voix haute." },
+            { text: "Gage : Strip + Fantasme\n👕 Enlève un vêtement (ou accessoire) lentement en décrivant le fantasme que tu n’as encore jamais osé réaliser." }
         ],
         4: [
-            { text: "Murmure Interdit : Approche-toi d’un joueur et murmure dans son oreille la phrase la plus cochonne que tu connaisses, de plus en plus lentement." },
-            { text: "Le Baiser Interdit : Embrasse le joueur de ton choix où tu veux... sauf sur la bouche. Tu dois le faire les yeux fermés." },
-            { text: "L’Explorateur Silencieux : Ferme les yeux. Laisse un joueur te toucher pendant 10 secondes sans parler. Tu dois deviner avec quelle partie de son corps il ou elle t’a effleuré." }
+            { text: "👄 Gage: Murmure interdit\n💬 Approche-toi d’un joueur… et murmure dans son oreille le mot ou la phrase la plus cochonne que tu connaisses, de plus en plus lentement." },
+            { text: "👅 Gage: Le Baiser Interdit\n💋 Tu dois embrasser le joueur de ton choix… sauf sur la bouche, et avec les yeux fermés. Si tu tombes sur un endroit “tabou”, tu recommences." },
+            { text: "💦 Gage: L’Explorateur silencieux\n😶 Ferme les yeux. Laisse un joueur·se de ton choix te toucher pendant 10 secondes. À toi de deviner avec quelle partie de son corps il ou elle t’a effleuré." }
         ]
     }
 };
