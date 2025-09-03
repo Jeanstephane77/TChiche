@@ -26,6 +26,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const gageModal = document.getElementById('gage-modal');
     const gageText = document.getElementById('gage-text');
     const closeGageModalBtn = document.getElementById('close-gage-modal-btn');
+    const notificationModal = document.getElementById('notification-modal');
+    const notificationText = document.getElementById('notification-text');
+    const closeNotificationModalBtn = document.getElementById('close-notification-modal-btn');
+
 
     // --- DOM Elements (Game Screen) ---
     const gameScreen = document.getElementById('game-screen');
@@ -92,7 +96,6 @@ document.addEventListener('DOMContentLoaded', () => {
             customChallenges[type][level].push({ text: customText, author: 'vous' });
             customChallengeText.value = '';
             customChallengeModal.style.display = 'none';
-            alert('Défi ajouté !');
         } else {
             alert('Veuillez remplir tous les champs.');
         }
@@ -102,11 +105,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const validPlayers = players.filter(p => p.name.trim() !== '');
 
         if (validPlayers.length < 1) {
-            alert("Veuillez entrer au moins un nom de joueur.");
+            showNotification("Veuillez entrer au moins un nom de joueur.");
             return;
         }
         
         players = validPlayers;
+        // Reset passes for all players at the start of a new game
+        players.forEach(p => p.passes = 0);
         
         setupScreen.classList.remove('active');
         gameScreen.classList.add('active');
@@ -118,7 +123,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     function updateTurnIndicator() {
-        turnIndicator.textContent = `Au tour de ${players[currentPlayerIndex].name}`;
+        if(players.length > 0) {
+            turnIndicator.textContent = `Au tour de ${players[currentPlayerIndex].name}`;
+        }
     }
 
     function switchTurn() {
@@ -126,6 +133,18 @@ document.addEventListener('DOMContentLoaded', () => {
         updateTurnIndicator();
         challengeText.textContent = 'Préparez-vous...';
         authorTag.style.display = 'none';
+    }
+
+    function showNotification(message, isGageWarning = false) {
+        notificationText.textContent = message;
+        notificationModal.style.display = 'flex';
+        // We link the "OK" button's action based on the type of notification
+        closeNotificationModalBtn.onclick = () => {
+            notificationModal.style.display = 'none';
+            if (isGageWarning) {
+                switchTurn(); // Only switch turn after the warning
+            }
+        };
     }
 
     function handlePass() {
@@ -136,15 +155,13 @@ document.addEventListener('DOMContentLoaded', () => {
             triggerGage();
             currentPlayer.passes = 0; // Reset after getting the gage
         } else {
-            alert(`C'est ton premier refus. Au prochain, c'est le gage !`);
-            switchTurn();
+            showNotification(`C'est ton premier refus. Au prochain, c'est le gage !`, true);
         }
     }
 
     function triggerGage() {
         if (typeof challenges.gages === 'undefined' || !challenges.gages[selectedLevel] || challenges.gages[selectedLevel].length === 0) {
-            alert("Aucun gage disponible pour ce niveau ! C'est ton jour de chance.");
-            switchTurn();
+            showNotification("Aucun gage disponible pour ce niveau ! C'est ton jour de chance.", true);
             return;
         }
 
@@ -158,7 +175,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function closeGageModal() {
         gageModal.style.display = 'none';
-        switchTurn(); // Move to next player after closing the gage modal
+        switchTurn(); 
     }
 
     function getChallenge(type) {
@@ -200,7 +217,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 300);
     }
 
-    // --- Event Listeners (Setup Screen) ---
+    // --- Event Listeners ---
     levelButtons.forEach(button => {
         button.addEventListener('click', () => selectLevel(button.dataset.level));
     });
@@ -211,10 +228,15 @@ document.addEventListener('DOMContentLoaded', () => {
     closeModalBtn.addEventListener('click', () => customChallengeModal.style.display = 'none');
     saveChallengeBtn.addEventListener('click', saveCustomChallenge);
     closeGageModalBtn.addEventListener('click', closeGageModal);
+    
+    // Generic listener for the notification modal, action is set dynamically
+    closeNotificationModalBtn.addEventListener('click', () => {
+        notificationModal.style.display = 'none';
+    });
 
 
     // --- Initial state ---
-    addPlayer(); // Add the first player by default
+    addPlayer(); 
     selectLevel(1);
 });
 
