@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     // --- State Variables ---
-    let players = ['']; // Start with one empty player
+    let players = []; 
     let selectedLevel = 1;
     let customChallenges = {
         truths: { 1: [], 2: [], 3: [], 4: [] },
@@ -15,37 +15,52 @@ document.addEventListener('DOMContentLoaded', () => {
     const addPlayerBtn = document.getElementById('add-player-btn');
     const startGameBtn = document.getElementById('start-game-btn');
     const addCustomBtn = document.getElementById('add-custom-btn');
+    
+    // --- Modals ---
     const customChallengeModal = document.getElementById('custom-challenge-modal');
     const closeModalBtn = document.getElementById('close-modal-btn');
     const saveChallengeBtn = document.getElementById('save-challenge-btn');
     const customChallengeText = document.getElementById('custom-challenge-text');
     const customLevelSelect = document.getElementById('custom-level-select');
     const customTypeSelect = document.getElementById('custom-type-select');
+    const gageModal = document.getElementById('gage-modal');
+    const gageText = document.getElementById('gage-text');
+    const closeGageModalBtn = document.getElementById('close-gage-modal-btn');
 
     // --- DOM Elements (Game Screen) ---
     const gameScreen = document.getElementById('game-screen');
-    const turnIndicator = document.getElementById('turn-indicator');
-    const challengeText = document.getElementById('challenge-text');
-    const cardContent = document.getElementById('card-content');
-    const authorTag = document.getElementById('author-tag');
-    const truthBtn = document.getElementById('truth-btn');
-    const dareBtn = document.getElementById('dare-btn');
-    const randomBtn = document.getElementById('random-btn');
-    const nextPlayerBtn = document.getElementById('next-player-btn');
-
+    let turnIndicator, challengeText, cardContent, authorTag, truthBtn, dareBtn, randomBtn, nextPlayerBtn, passBtn;
 
     // --- Functions ---
+    function initializeGameScreenElements() {
+        turnIndicator = document.getElementById('turn-indicator');
+        challengeText = document.getElementById('challenge-text');
+        cardContent = document.getElementById('card-content');
+        authorTag = document.getElementById('author-tag');
+        truthBtn = document.getElementById('truth-btn');
+        dareBtn = document.getElementById('dare-btn');
+        randomBtn = document.getElementById('random-btn');
+        nextPlayerBtn = document.getElementById('next-player-btn');
+        passBtn = document.getElementById('pass-btn');
+
+        // Add event listeners for game screen buttons
+        if (truthBtn) truthBtn.addEventListener('click', () => getChallenge('truth'));
+        if (dareBtn) dareBtn.addEventListener('click', () => getChallenge('dare'));
+        if (randomBtn) randomBtn.addEventListener('click', () => getChallenge('random'));
+        if (nextPlayerBtn) nextPlayerBtn.addEventListener('click', switchTurn);
+        if (passBtn) passBtn.addEventListener('click', handlePass);
+    }
+
 
     function updatePlayerList() {
-        if (!playerList) return;
         playerList.innerHTML = '';
         players.forEach((player, index) => {
             const playerInput = document.createElement('input');
             playerInput.type = 'text';
-            playerInput.value = player;
+            playerInput.value = player.name;
             playerInput.placeholder = `Prénom Joueur·se ${index + 1}`;
             playerInput.addEventListener('input', (e) => {
-                players[index] = e.target.value;
+                players[index].name = e.target.value;
             });
             playerList.appendChild(playerInput);
         });
@@ -53,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function addPlayer() {
         if (players.length < 10) {
-            players.push(''); // Add an empty string for the new player
+            players.push({ name: '', passes: 0 });
             updatePlayerList();
         }
     }
@@ -84,7 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function startGame() {
-        const validPlayers = players.map(p => p.trim()).filter(p => p); // Filter out empty strings
+        const validPlayers = players.filter(p => p.name.trim() !== '');
 
         if (validPlayers.length < 1) {
             alert("Veuillez entrer au moins un nom de joueur.");
@@ -92,27 +107,58 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         players = validPlayers;
-
-        if (!setupScreen || !gameScreen) return;
         
-        setupScreen.style.display = 'none';
-        gameScreen.style.display = 'flex'; // Use flex to match CSS
+        setupScreen.classList.remove('active');
+        gameScreen.classList.add('active');
         
+        initializeGameScreenElements();
         currentPlayerIndex = 0;
         updateTurnIndicator();
         challengeText.textContent = 'Préparez-vous...';
     }
     
     function updateTurnIndicator() {
-        if (!turnIndicator) return;
-        turnIndicator.textContent = `Au tour de ${players[currentPlayerIndex]}`;
+        turnIndicator.textContent = `Au tour de ${players[currentPlayerIndex].name}`;
     }
 
     function switchTurn() {
         currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
         updateTurnIndicator();
-        if (challengeText) challengeText.textContent = 'Préparez-vous...';
-        if (authorTag) authorTag.style.display = 'none';
+        challengeText.textContent = 'Préparez-vous...';
+        authorTag.style.display = 'none';
+    }
+
+    function handlePass() {
+        const currentPlayer = players[currentPlayerIndex];
+        currentPlayer.passes += 1;
+
+        if (currentPlayer.passes >= 2) {
+            triggerGage();
+            currentPlayer.passes = 0; // Reset after getting the gage
+        } else {
+            alert(`C'est ton premier refus. Au prochain, c'est le gage !`);
+            switchTurn();
+        }
+    }
+
+    function triggerGage() {
+        if (typeof challenges.gages === 'undefined' || !challenges.gages[selectedLevel] || challenges.gages[selectedLevel].length === 0) {
+            alert("Aucun gage disponible pour ce niveau ! C'est ton jour de chance.");
+            switchTurn();
+            return;
+        }
+
+        const gagePool = challenges.gages[selectedLevel];
+        const randomIndex = Math.floor(Math.random() * gagePool.length);
+        const selectedGage = gagePool[randomIndex];
+        
+        gageText.textContent = selectedGage.text;
+        gageModal.style.display = 'flex';
+    }
+
+    function closeGageModal() {
+        gageModal.style.display = 'none';
+        switchTurn(); // Move to next player after closing the gage modal
     }
 
     function getChallenge(type) {
@@ -121,8 +167,8 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const availableTruths = [...challenges.truths[selectedLevel], ...(customChallenges.truths[selectedLevel] || [])];
-        const availableDares = [...challenges.dares[selectedLevel], ...(customChallenges.dares[selectedLevel] || [])];
+        const availableTruths = [...challenges.truths[selectedLevel], ...customChallenges.truths[selectedLevel]];
+        const availableDares = [...challenges.dares[selectedLevel], ...customChallenges.dares[selectedLevel]];
 
         let pool = [];
         if (type === 'truth') pool = availableTruths;
@@ -140,8 +186,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function displayChallenge(text, author = null) {
-        if (!challengeText || !cardContent || !authorTag) return;
-        challengeText.innerHTML = '';
         cardContent.style.opacity = 0;
 
         setTimeout(() => {
@@ -161,26 +205,16 @@ document.addEventListener('DOMContentLoaded', () => {
         button.addEventListener('click', () => selectLevel(button.dataset.level));
     });
 
-    if (addPlayerBtn) addPlayerBtn.addEventListener('click', addPlayer);
-    if (startGameBtn) startGameBtn.addEventListener('click', startGame);
+    addPlayerBtn.addEventListener('click', addPlayer);
+    startGameBtn.addEventListener('click', startGame);
+    addCustomBtn.addEventListener('click', () => customChallengeModal.style.display = 'flex');
+    closeModalBtn.addEventListener('click', () => customChallengeModal.style.display = 'none');
+    saveChallengeBtn.addEventListener('click', saveCustomChallenge);
+    closeGageModalBtn.addEventListener('click', closeGageModal);
 
-    // Custom Challenge Modal
-    if (addCustomBtn) addCustomBtn.addEventListener('click', () => {
-        if (customChallengeModal) customChallengeModal.style.display = 'flex';
-    });
-    if (closeModalBtn) closeModalBtn.addEventListener('click', () => {
-        if (customChallengeModal) customChallengeModal.style.display = 'none';
-    });
-    if (saveChallengeBtn) saveChallengeBtn.addEventListener('click', saveCustomChallenge);
-
-    // --- Event Listeners (Game Screen) ---
-    if (truthBtn) truthBtn.addEventListener('click', () => getChallenge('truth'));
-    if (dareBtn) dareBtn.addEventListener('click', () => getChallenge('dare'));
-    if (randomBtn) randomBtn.addEventListener('click', () => getChallenge('random'));
-    if (nextPlayerBtn) nextPlayerBtn.addEventListener('click', switchTurn);
 
     // --- Initial state ---
+    addPlayer(); // Add the first player by default
     selectLevel(1);
-    updatePlayerList();
 });
 
