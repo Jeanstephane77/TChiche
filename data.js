@@ -84,7 +84,7 @@ const challenges = {
         2: [
             { text: "😈 Gage : L’Esclave de la Tentation\n🧎‍♂️ Tu deviens le ou la \"serviteur·se personnel·le\" du joueur de ton choix pendant 3 tours. Chaque fois qu’il ou elle te regarde, tu dois dire : Je suis à toi." },
             { text: "🎲 Gage : La Roulette Coquine\n🎰 Les autres joueurs choisissent au hasard un défi pour toi dans la liste." },
-            { text: "🔥 Gage : Le Secret Confessé\n🤫 Révèle ton dernier mensonge ou un secret que tu n'as jamais osé dire à personne dans la pièce. Si tu refuses, tu dois répondre à 3 questions indiscrètes posées par les autres joueurs." }
+            { text: "🔥 Gage : Le Secret Confessé\n🤫 Révèle ton dernier mensonge ou un secret que tu n'as jamais osé dire à personne dans la pièce." }
         ],
         3: [
             { text: "Gage : Message Dating\n📱 Prends ton téléphone, les autres choisissent une lettre au hasard. Tu dois envoyer un SMS de proposition de date au premier contact de ton téléphone commençant par cette lettre, à voix haute." },
