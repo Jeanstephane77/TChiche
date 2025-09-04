@@ -78,15 +78,18 @@ const challenges = {
     gages: {
         1: [
             { text: "Le Gage Théâtral : \"La Déclaration Absurde\"\nLe joueur doit faire une déclaration d'amour passionnée et enflammée à l'objet le plus improbable de la pièce (une plante verte, une lampe, un coussin...). Il/elle doit être très convaincant(e), comme dans une grande scène de film romantique." },
-            { text: "Le Gage Social : \"Le Community Manager d'un Soir\"\nLe joueur doit donner son téléphone au groupe. Les autres joueurs ont 1 minute pour écrire un statut ou une story courte (3-4 mots max, sans insulte) et complètement absurde sur le réseau social de leur choix (Instagram, Facebook, etc.). Le statut doit rester en ligne pendant au moins 15 minutes." }
+            { text: "Le Gage Social : \"Le Community Manager d'un Soir\"\nLe joueur doit donner son téléphone au groupe. Les autres joueurs ont 1 minute pour écrire un statut ou une story courte (3-4 mots max, sans insulte) et complètement absurde sur le réseau social de leur choix (Instagram, Facebook, etc.). Le statut doit rester en ligne pendant au moins 15 minutes." },
+            { text: "Le Mime Gourmand\nLe joueur doit mimer qu'il/elle mange son plat préféré de la manière la plus sensuelle possible pendant 30 secondes. Les autres joueurs doivent deviner quel est ce plat. Si personne ne trouve, le joueur doit continuer pendant 15 secondes supplémentaires." }
         ],
         2: [
             { text: "😈 Gage : L’Esclave de la Tentation\n🧎‍♂️ Tu deviens le ou la \"serviteur·se personnel·le\" du joueur de ton choix pendant 3 tours. Chaque fois qu’il ou elle te regarde, tu dois dire : Je suis à toi." },
-            { text: "🎲 Gage : La Roulette Coquine\n🎰 Les autres joueurs choisissent au hasard un défi pour toi dans la liste." }
+            { text: "🎲 Gage : La Roulette Coquine\n🎰 Les autres joueurs choisissent au hasard un défi pour toi dans la liste." },
+            { text: "🔥 Gage : Le Secret Confessé\n🤫 Révèle ton dernier mensonge ou un secret que tu n'as jamais osé dire à personne dans la pièce. Si tu refuses, tu dois répondre à 3 questions indiscrètes posées par les autres joueurs." }
         ],
         3: [
             { text: "Gage : Message Dating\n📱 Prends ton téléphone, les autres choisissent une lettre au hasard. Tu dois envoyer un SMS de proposition de date au premier contact de ton téléphone commençant par cette lettre, à voix haute." },
-            { text: "Gage : Strip + Fantasme\n👕 Enlève un vêtement (ou accessoire) lentement en décrivant le fantasme que tu n’as encore jamais osé réaliser." }
+            { text: "Gage : Strip + Fantasme\n👕 Enlève un vêtement (ou accessoire) lentement en décrivant le fantasme que tu n’as encore jamais osé réaliser." },
+            { text: "Gage : Le Toucher Aveugle\n👁️‍🗨️ Les yeux bandés, tu dois identifier un joueur uniquement en touchant son visage. Si tu te trompes, tu dois faire un compliment sensuel à chaque personne dans la pièce." }
         ],
         4: [
             { text: "👄 Gage: Murmure interdit\n💬 Approche-toi d’un joueur… et murmure dans son oreille le mot ou la phrase la plus cochonne que tu connaisses, de plus en plus lentement." },
