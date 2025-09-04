@@ -1,8 +1,8 @@
 {
-  "name": "T'chiche",
-  "short_name": "T'chiche",
+  "name": "T'chiche - Le Jeu",
+  "short_name": "T'chiche Game",
   "description": "L'expérience ultime pour pimenter vos soirées.",
-  "id": "/?v=final-version",
+  "id": "/?v=icon-fix-final",
   "start_url": "/index.html",
   "display": "standalone",
   "orientation": "portrait",
