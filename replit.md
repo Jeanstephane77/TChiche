@@ -25,6 +25,12 @@ T'chiche is a French progressive web application (PWA) designed for adult party 
 - Configured Replit workflow for development
 - Set up autoscale deployment configuration
 - Added cache control headers to prevent development caching issues
+- Fixed PWA icon installation issues for Android devices:
+  - Added proper manifest link and theme-color meta tag to index.html
+  - Fixed manifest.json with multiple icon purposes (any + maskable)
+  - Updated service worker to cache correct icon paths
+  - Added service worker registration script
+  - Updated cache version to force refresh
 
 ## Technical Setup
 - **Development Server**: Python `http.server` on port 5000
