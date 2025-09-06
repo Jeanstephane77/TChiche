@@ -1,13 +1,12 @@
-const CACHE_NAME = 'tchiche-cache-v2.0';
+const CACHE_NAME = 'tchiche-cache-v4';
 const urlsToCache = [
   '/',
   '/index.html',
-  '/styles.css',
   '/data.js',
   '/script.js',
   '/manifest.json',
-  '/icons/icon-192.png',
-  '/icons/icon-512.png'
+  '/icon-192.png',
+  '/icon-512.png'
 ];
 
 // Installation du Service Worker

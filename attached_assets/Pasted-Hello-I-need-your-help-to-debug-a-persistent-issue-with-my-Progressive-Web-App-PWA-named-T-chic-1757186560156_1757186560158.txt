@@ -1,0 +1,156 @@
+Hello,
+
+I need your help to debug a persistent issue with my Progressive Web App (PWA) named "T'chiche," which is hosted in this Replit environment.
+
+Goal:
+The application must be installable on an Android smartphone via Chrome's "Install app" feature, and the custom icon (icon-512.png) must be displayed on the phone's home screen.
+
+The Problem:
+Currently, when I install the app, the Android system ignores my custom icon and generates a default one instead (a colored circle with the first letter of the app's name). The application works perfectly, but the visual branding is lost.
+
+What has already been tried (without success):
+I have attempted multiple solutions to clear the cache, which seems to be the cause, but nothing has worked:
+
+Verified that the icon paths in manifest.json are correct.
+
+Used relative paths (/icon-512.png) and then absolute URLs (full URLs to the images hosted on GitHub).
+
+Added the "purpose": "any maskable" property to my icons in manifest.json.
+
+Uninstalled and reinstalled the app dozens of times.
+
+Cleared the site's cache in the browser settings on the phone.
+
+Performed a full reboot of the phone after clearing the cache.
+
+Changed the name, short_name, and id fields in manifest.json to force the system to treat it as a "new" application.
+
+Despite all this, the problem persists, suggesting a very subtle configuration issue or a stubborn system-level cache problem.
+
+My Request:
+Could you please analyze this project's files (index.html, manifest.json, service-worker.js, etc.) and identify the root cause of this icon issue? Please propose a definitive code fix so that the custom icon displays correctly after installation on an Android phone.
+
+Here are the main project files:
+
+1. index.html file:
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>T’chiche v2.0</title>
+    <meta name="theme-color" content="#0d021f"/>
+    <link rel="manifest" href="manifest.json">
+    <link rel="preconnect" href="[https://fonts.googleapis.com](https://fonts.googleapis.com)">
+    <link rel="preconnect" href="[https://fonts.gstatic.com](https://fonts.gstatic.com)" crossorigin>
+    <link href="[https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Montserrat:wght@400;600&display=swap](https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Montserrat:wght@400;600&display=swap)" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0d021f;
+            --text-color: #ffffff;
+            --primary-color: #ff69b4;
+            --card-bg-color: rgba(255, 255, 255, 0.05);
+            --border-color: rgba(255, 105, 180, 0.5);
+            --font-ui: 'Montserrat', sans-serif;
+            --font-title: 'Caveat', cursive;
+        }
+        /* ... (rest of the CSS is here) ... */
+    </style>
+</head>
+<body>
+    <!-- ... (rest of the HTML is here) ... -->
+    <script src="data.js"></script>
+    <script src="script.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then(registration => console.log('ServiceWorker registration successful.'))
+                    .catch(error => console.log('ServiceWorker registration failed: ', error));
+            });
+        }
+    </script>
+</body>
+</html>
+
+2. manifest.json file:
+
+{
+  "name": "T'chiche - Le Jeu",
+  "short_name": "T'chiche Game",
+  "description": "L'expérience ultime pour pimenter vos soirées.",
+  "id": "/?v=icon-fix-final",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0d021f",
+  "theme_color": "#ff69b4",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [],
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  }
+}
+
+3. service-worker.js file:
+
+const CACHE_NAME = 'tchiche-cache-v3';
+const urlsToCache = [
+  '/',
+  '/index.html',
+  '/script.js',
+  '/data.js',
+  '/manifest.json',
+  '/icon-192.png',
+  '/icon-512.png'
+];
+
+self.addEventListener('install', event => {
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+      .then(cache => {
+        console.log('Opened cache');
+        return cache.addAll(urlsToCache);
+      })
+  );
+});
+
+self.addEventListener('fetch', event => {
+  event.respondWith(
+    caches.match(event.request)
+      .then(response => {
+        return response || fetch(event.request);
+      })
+  );
+});
+
+self.addEventListener('activate', event => {
+  const cacheWhitelist = [CACHE_NAME];
+  event.waitUntil(
+    caches.keys().then(cacheNames => {
+      return Promise.all(
+        cacheNames.map(cacheName => {
+          if (cacheWhitelist.indexOf(cacheName) === -1) {
+            return caches.delete(cacheName);
+          }
+        })
+      );
+    })
+  );
+});
+
+Thank you for your help!
