@@ -1,0 +1,101 @@
+Hello Agent,
+
+I need your help to update the content of my PWA game, "T'chiche". The goal is to modify the list of challenges (truths and dares) which are all located in the data.js file.
+
+Please, only modify the data.js file. The other files (index.html, script.js, etc.) should remain unchanged.
+
+Here is the current content of the data.js file that you need to edit:
+
+// CURRENT data.js
+const challenges = {
+    truths: {
+        1: [
+            { text: "T'chiche de me dire ta pire gaffe en public, avec tous les détails croustillants ?" },
+            // ... (and all other current truths)
+        ],
+        2: [ /* ... */ ],
+        3: [ /* ... */ ],
+        4: [ /* ... */ ]
+    },
+    dares: {
+        1: [
+            { text: "T'chiche de me chuchoter un compliment à l’oreille." },
+            // ... (and all other current dares)
+        ],
+        2: [ /* ... */ ],
+        3: [ /* ... */ ],
+        4: [ /* ... */ ]
+    },
+    gages: {
+        1: [ /* ... */ ],
+        2: [ /* ... */ ],
+        3: [ /* ... */ ],
+        4: [ /* ... */ ]
+    }
+};
+
+Now, please apply the following changes to this data structure:
+
+1. Modifications for Phase 4 ("Transcendance"):
+
+In the dares for level 4, remove this action:
+
+{ text: "T'chiche d’écrire un mot coquin avec ton doigt que je dois effacer avec ma bouche." }
+
+In the dares for level 4, add this new action:
+
+{ text: "T'chiche d’embrasser passionnément la personne en face de toi pendant 60 secondes… mais sans utiliser ta langue une seule fois" }
+
+2. Modifications for Phase 3 ("Hors de contrôle"):
+
+In the dares for level 3, remove this action:
+
+{ text: "T'chiche de me proposer un scénario de jeu de rôle que tu aimerais tester." }
+
+In the dares for level 3, add this new action:
+
+{ text: "T'chiche de demander à une personne de choisir sa zone la plus sensible ou chatouilleuse... Et de la tester pendant 25 secondes avec ta langue ou tes doigts." }
+
+3. Modifications for Phase 2 ("Plus en profondeur"):
+
+In the truths for level 2, add these new truths:
+
+{ text: "T'Chiche de deviner la taille de la poitrine de la personne féminine la plus proche de toi ?" }
+
+{ text: "T'Chiche de dire si tu préfères faire l'amour avec la lumière allumée ou dans le noir ?" }
+
+{ text: "T'Chiche de deviner quand la personne en face de toi s'est fait plaisir en solo pour la dernière fois." }
+
+{ text: "T'Chiche de dire quel est ton talent caché au lit ?" }
+
+{ text: "T'Chiche de vivre deux ans sans sexe ou sans internet ?" }
+
+{ text: "T'Chiche de me dire si tu as déjà regardé du hentai ou lu des histoires érotiques ?" }
+
+{ text: "T'Chiche de t'isoler avec quelqu'un dans une pièce pour faire l'amour pendant une soirée entre amis ?" }
+
+{ text: "T'chiche de dormir chez le voisin, car tu es sorti de chez toi en petite tenue à cause d'une fausse alerte à incendie ?" }
+
+{ text: "T'chiche de me raconter en 2 minutes un scénario de jeu de rôle que tu aimerais tester." }
+
+In the dares for level 2, remove this action:
+
+{ text: "T'chiche de dessiner un mot secret sur mon dos avec ton doigt." }
+
+4. Modifications for Phase 1 ("Préliminaires"):
+
+In the truths for level 1, add these new truths:
+
+{ text: "T'chiche de laisser le soleil caresser ta peau seins nus sur une plage ?" }
+
+{ text: "T'chiche de me dire si embrasser quelqu'un d'autre c'est déjà trahir, ou c'est juste un petit avant-goût interdit ?" }
+
+{ text: "T'chiche de te retrouver en petite tenue à une soirée ? Par défi, par envie… ou par accident (très sexy) ?" }
+
+{ text: "T'chiche de me dire si faire l'amour sur une playlist bien chaude c'est cliché... ou un plaisir qui mérite d'être testé à fond ?" }
+
+{ text: "T'chiche de dire si tu savais que ton ou ta meilleur·e pote se fait tromper tu lui dirais direct ?" }
+
+{ text: "T'chiche d'avouer si t'as déjà fantasmé te taper la personne en couple avec un ou une de tes ami.e.s ?" }
+
+Please provide the complete and updated code for the data.js file after applying all these changes. Thank y
