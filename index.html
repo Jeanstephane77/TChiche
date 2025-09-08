@@ -229,7 +229,53 @@
         .game-buttons .choice-btn {
             flex-basis: calc(50% - 5px);
         }
-        
+
+        /* --- Wheel Screen --- */
+        #wheel-screen {
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            min-height: 80vh;
+            position: relative;
+        }
+
+        #wheel-canvas {
+            background: var(--card-bg-color);
+            border: 5px solid var(--border-color);
+            border-radius: 50%;
+            box-shadow: 0 0 20px var(--primary-color), inset 0 0 20px var(--primary-color);
+        }
+
+        #selector-arrow {
+            width: 0;
+            height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-bottom: 25px solid var(--primary-color);
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -195px);
+            z-index: 10;
+        }
+
+        #spin-btn {
+            background: var(--primary-color);
+            color: var(--bg-color);
+            font-weight: 700;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 0 20px var(--primary-color);
+            transition: all 0.3s ease;
+        }
+
+        #spin-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px var(--primary-color);
+        }
+
         /* --- Modal --- */
         .modal-overlay {
             position: fixed;
@@ -310,6 +356,13 @@
             </div>
 
             <button id="start-game-btn">T'chiche ?</button>
+        </div>
+
+        <!-- Wheel Screen -->
+        <div id="wheel-screen" class="screen">
+            <canvas id="wheel-canvas" width="350" height="350"></canvas>
+            <div id="selector-arrow"></div>
+            <button id="spin-btn">Lancer la roue</button>
         </div>
 
         <!-- Game Screen -->
