@@ -6,10 +6,14 @@ document.addEventListener('DOMContentLoaded', () => {
         truths: { 1: [], 2: [], 3: [], 4: [] },
         dares: { 1: [], 2: [], 3: [], 4: [] }
     };
-    let currentPlayerIndex = 0;
+    let currentPlayer = null;
 
     // --- DOM Elements (Setup Screen) ---
     const setupScreen = document.getElementById('setup-screen');
+    const wheelScreen = document.getElementById('wheel-screen');
+    const wheelCanvas = document.getElementById('wheel-canvas');
+    const spinBtn = document.getElementById('spin-btn');
+    const wheelCtx = wheelCanvas ? wheelCanvas.getContext('2d') : null;
     const levelButtons = document.querySelectorAll('.level-btn');
     const playerList = document.getElementById('player-list');
     const addPlayerBtn = document.getElementById('add-player-btn');
@@ -51,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (truthBtn) truthBtn.addEventListener('click', () => getChallenge('truth'));
         if (dareBtn) dareBtn.addEventListener('click', () => getChallenge('dare'));
         if (randomBtn) randomBtn.addEventListener('click', () => getChallenge('random'));
-        if (nextPlayerBtn) nextPlayerBtn.addEventListener('click', switchTurn);
+        if (nextPlayerBtn) nextPlayerBtn.addEventListener('click', prepareNextRound);
         if (passBtn) passBtn.addEventListener('click', handlePass);
     }
 
@@ -111,27 +115,19 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Recreate the players array with only valid players and reset their passes
         players = namedPlayers.map(name => ({ name: name, passes: 0 }));
-        
+        currentPlayer = null;
+
         setupScreen.classList.remove('active');
-        gameScreen.classList.add('active');
-        
+        wheelScreen.classList.add('active');
+
         initializeGameScreenElements();
-        currentPlayerIndex = 0;
-        updateTurnIndicator();
-        challengeText.textContent = 'Préparez-vous...';
-    }
-    
-    function updateTurnIndicator() {
-        if(players.length > 0) {
-            turnIndicator.textContent = `Au tour de ${players[currentPlayerIndex].name}`;
-        }
+        drawWheel();
     }
 
-    function switchTurn() {
-        currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
-        updateTurnIndicator();
-        challengeText.textContent = 'Préparez-vous...';
-        authorTag.style.display = 'none';
+    function updateTurnIndicator() {
+        if(currentPlayer) {
+            turnIndicator.textContent = `Au tour de ${currentPlayer.name}`;
+        }
     }
 
     function showNotification(message, isGageWarning = false) {
@@ -141,16 +137,16 @@ document.addEventListener('DOMContentLoaded', () => {
         // We define what the "OK" button does when clicked
         closeNotificationModalBtn.onclick = () => {
             notificationModal.style.display = 'none';
-            // If it was a gage warning, we switch to the next player
+            // If it was a gage warning, we prepare next round
             if (isGageWarning) {
-                switchTurn();
+                prepareNextRound();
             }
             // Otherwise, we do nothing (it was a simple info message)
         };
     }
 
     function handlePass() {
-        const currentPlayer = players[currentPlayerIndex];
+        if (!currentPlayer) return;
         currentPlayer.passes += 1;
 
         if (currentPlayer.passes >= 2) {
@@ -178,7 +174,96 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function closeGageModal() {
         gageModal.style.display = 'none';
-        switchTurn(); 
+        prepareNextRound();
+    }
+
+    function prepareNextRound() {
+        gameScreen.classList.remove('active');
+        wheelScreen.classList.add('active');
+        drawWheel();
+    }
+
+    function drawWheel() {
+        if (!wheelCtx) return;
+        const radius = wheelCanvas.width / 2;
+        const total = players.length;
+        wheelCtx.clearRect(0, 0, wheelCanvas.width, wheelCanvas.height);
+
+        for (let i = 0; i < total; i++) {
+            const startAngle = (2 * Math.PI / total) * i;
+            const endAngle = startAngle + (2 * Math.PI / total);
+            wheelCtx.beginPath();
+            wheelCtx.moveTo(radius, radius);
+            wheelCtx.arc(radius, radius, radius, startAngle, endAngle);
+            wheelCtx.closePath();
+            wheelCtx.fillStyle = i % 2 === 0 ? '#ff69b4' : '#39ff14';
+            wheelCtx.fill();
+            wheelCtx.strokeStyle = '#000';
+            wheelCtx.stroke();
+
+            // Draw player name
+            wheelCtx.save();
+            wheelCtx.translate(radius, radius);
+            wheelCtx.rotate(startAngle + (endAngle - startAngle) / 2);
+            wheelCtx.textAlign = 'right';
+            wheelCtx.fillStyle = '#000';
+            wheelCtx.font = '16px Montserrat';
+            wheelCtx.fillText(players[i].name, radius - 10, 5);
+            wheelCtx.restore();
+        }
+
+        wheelCanvas.style.transform = 'rotate(0deg)';
+        spinBtn.disabled = false;
+    }
+
+    function spinWheel() {
+        if (!wheelCanvas) return;
+        spinBtn.disabled = true;
+        const extraSpins = Math.random() * 360 + 720; // at least two spins
+        const duration = 4000;
+        const start = performance.now();
+        const initialAngle = 0;
+
+        function animate(now) {
+            const elapsed = now - start;
+            const progress = Math.min(elapsed / duration, 1);
+            const easeOut = 1 - Math.pow(1 - progress, 3);
+            const angle = initialAngle + easeOut * extraSpins;
+            wheelCanvas.style.transform = `rotate(${angle}deg)`;
+            if (progress < 1) {
+                requestAnimationFrame(animate);
+            } else {
+                const finalAngle = angle % 360;
+                getWinner(finalAngle);
+            }
+        }
+
+        requestAnimationFrame(animate);
+    }
+
+    function getWinner(angle) {
+        const total = players.length;
+        const segmentAngle = 360 / total;
+        const normalized = (360 - angle + segmentAngle / 2) % 360;
+        const index = Math.floor(normalized / segmentAngle);
+        currentPlayer = players[index];
+
+        const availableTruths = [...challenges.truths[selectedLevel], ...customChallenges.truths[selectedLevel]];
+        const availableDares = [...challenges.dares[selectedLevel], ...customChallenges.dares[selectedLevel]];
+        const pool = [...availableTruths, ...availableDares];
+        const randomIndex = Math.floor(Math.random() * pool.length);
+        const challenge = pool[randomIndex];
+
+        setTimeout(() => {
+            wheelScreen.classList.remove('active');
+            gameScreen.classList.add('active');
+            updateTurnIndicator();
+            if (challenge) {
+                displayChallenge(challenge.text, challenge.author);
+            } else {
+                displayChallenge('Plus de défis disponibles dans cette catégorie ! Ajoutez les vôtres ou changez de niveau.');
+            }
+        }, 2000);
     }
 
     function getChallenge(type) {
@@ -237,6 +322,8 @@ document.addEventListener('DOMContentLoaded', () => {
     closeNotificationModalBtn.addEventListener('click', () => {
         notificationModal.style.display = 'none';
     });
+
+    if (spinBtn) spinBtn.addEventListener('click', spinWheel);
 
 
     // --- Initial state ---

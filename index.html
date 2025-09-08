@@ -280,6 +280,36 @@
         .modal-content select {
             min-height: auto;
         }
+
+        /* --- Wheel Screen --- */
+        #wheel-screen {
+            justify-content: center;
+            align-items: center;
+        }
+
+        #wheel-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            margin: 0 auto;
+        }
+
+        #wheel-pointer {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-bottom: 30px solid var(--primary-color);
+            filter: drop-shadow(0 0 5px var(--primary-color));
+        }
+
+        #spin-btn {
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
@@ -310,6 +340,15 @@
             </div>
 
             <button id="start-game-btn">T'chiche ?</button>
+        </div>
+
+        <!-- Wheel Screen -->
+        <div id="wheel-screen" class="screen">
+            <div id="wheel-container">
+                <canvas id="wheel-canvas" width="300" height="300"></canvas>
+                <div id="wheel-pointer"></div>
+            </div>
+            <button id="spin-btn" class="action-btn">Tourner la roue</button>
         </div>
 
         <!-- Game Screen -->
